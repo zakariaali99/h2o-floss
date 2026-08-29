@@ -1,0 +1,14 @@
+"""Abstract base models."""
+
+from django.db import models
+
+
+class TimeStampedModel(models.Model):
+    """Adds created/updated bookkeeping. Mixed into catalog and order models."""
+
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+        get_latest_by = "created_at"

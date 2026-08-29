@@ -1,0 +1,46 @@
+@import 'tailwindcss';
+
+/* Design tokens lifted from reference/h2ofloss.html (cyan-800 brand, sky accents). */
+@theme {
+  --font-sans: 'Cairo', 'Tajawal', ui-sans-serif, system-ui, sans-serif;
+
+  --color-brand-50: #ecfeff;
+  --color-brand-100: #cffafe;
+  --color-brand-200: #a5f3fc;
+  --color-brand-400: #22d3ee;
+  --color-brand-500: #06b6d4;
+  --color-brand-600: #0891b2;
+  --color-brand-700: #0e7490;
+  --color-brand-800: #0c4a6e;
+  --color-brand-900: #082f49;
+
+  --color-surface: #f8fafc;
+  --color-surface-dark: #0f172a;
+
+  --radius-card: 1.5rem;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-800 font-sans antialiased dark:bg-slate-900 dark:text-slate-100;
+  }
+
+  /* Numbers and phone digits stay left-to-right inside RTL text. */
+  .ltr-nums {
+    direction: ltr;
+    unicode-bidi: isolate;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
