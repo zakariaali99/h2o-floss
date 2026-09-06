@@ -161,13 +161,13 @@ export function Home() {
         <div className="absolute -top-40 start-1/2 -translate-x-1/2 size-[600px] rounded-full bg-cyan-400/10 blur-3xl pointer-events-none" />
 
         <div className="mx-auto max-w-6xl px-4 sm:px-6 relative z-10">
-          <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
+          <div className="grid gap-8 lg:gap-12 lg:grid-cols-12 lg:items-center">
             {/* Right Text Column */}
             <motion.div
               initial="hidden"
               animate="visible"
               variants={staggerContainer}
-              className="order-2 lg:order-1 lg:col-span-7 z-10"
+              className="lg:col-span-7 z-10"
             >
               <motion.div variants={fadeInUp}>
                 <span className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-50/80 px-4 py-1.5 text-xs font-bold text-brand-900 shadow-sm backdrop-blur-md dark:border-cyan-500/30 dark:bg-cyan-950/60 dark:text-cyan-300">
@@ -193,57 +193,14 @@ export function Home() {
                 جهاز الخيط المائي المطور بقوة ضخ 140 PSI و5 أوضاع ذكية يزيل 99.9% من البلاك والبقايا في الأماكن التي لا
                 تصل إليها الفرشاة التقليدية.
               </motion.p>
-
-              {/* Price Tag & Guarantees Pill */}
-              <motion.div
-                variants={fadeInUp}
-                className="mt-8 flex flex-wrap items-center gap-4 rounded-3xl border border-cyan-500/30 bg-white/80 p-4.5 shadow-xl shadow-cyan-500/10 backdrop-blur-md dark:border-cyan-900/50 dark:bg-slate-900/90"
-              >
-                <div className="flex items-baseline gap-1.5 px-3">
-                  <span className="text-3xl font-black text-brand-900 dark:text-white ltr-nums">{heroPrice}</span>
-                  <span className="text-sm font-bold text-brand-700 dark:text-cyan-300">د.ل</span>
-                  {heroOldPrice && (
-                    <span className="text-sm text-slate-400 line-through ms-2 ltr-nums">{heroOldPrice} د.ل</span>
-                  )}
-                </div>
-
-                <div className="h-8 w-px bg-slate-200 dark:bg-slate-800 hidden sm:block" />
-
-                <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 px-2">
-                  <CheckCircle2 className="size-4" />
-                  <span>توصيل لكافة المدن الليبية · كاش عند الاستلام أو تحويل مصرفي عبر واتساب</span>
-                </div>
-              </motion.div>
-
-              {/* CTA Action Buttons */}
-              <motion.div
-                variants={fadeInUp}
-                className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center w-full sm:w-auto"
-              >
-                <Link
-                  to="/product/h2o-floss"
-                  className="group relative inline-flex items-center justify-center gap-3 rounded-full bg-gradient-to-r from-brand-800 to-brand-900 px-8 py-4 text-base font-bold text-white shadow-xl shadow-brand-900/30 transition-all hover:scale-105 active:scale-95 dark:from-brand-600 dark:to-cyan-600"
-                >
-                  <ShoppingBag className="size-5 transition-transform group-hover:-translate-y-0.5" />
-                  <span>اطلب الآن — الدفع عند الاستلام (كاش)</span>
-                </Link>
-
-                <a
-                  href="#demo-video"
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-300 bg-white/90 px-6 py-4 text-sm font-bold text-slate-700 shadow-sm backdrop-blur-md transition-all hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
-                >
-                  <Play className="size-4 text-brand-600 dark:text-cyan-400" />
-                  <span>مشاهدة فيديو التجربة</span>
-                </a>
-              </motion.div>
             </motion.div>
 
-            {/* Left Product Hero Stage with Floating 3D Spec Badges */}
+            {/* Product image — sits below the intro text, above the price/CTA on mobile */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-              className="order-1 lg:order-2 mb-6 lg:mb-0 lg:col-span-5 relative"
+              className="lg:col-span-5 lg:row-span-2 relative"
             >
               <div className="relative mx-auto max-w-md overflow-hidden rounded-[2.5rem] border border-cyan-500/30 bg-gradient-to-b from-white via-slate-50 to-cyan-50/30 p-8 shadow-[0_0_50px_rgba(6,182,212,0.15)] dark:border-slate-800 dark:from-slate-900 dark:to-slate-950">
                 {/* Floating Top Badge */}
@@ -306,6 +263,57 @@ export function Home() {
                   </div>
                 </div>
               </div>
+            </motion.div>
+
+            {/* Price + CTA — below the image */}
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={staggerContainer}
+              className="lg:col-span-7 z-10"
+            >
+              {/* Price Tag & Guarantees Pill */}
+              <motion.div
+                variants={fadeInUp}
+                className="flex flex-wrap items-center gap-4 rounded-3xl border border-cyan-500/30 bg-white/80 p-4.5 shadow-xl shadow-cyan-500/10 backdrop-blur-md dark:border-cyan-900/50 dark:bg-slate-900/90"
+              >
+                <div className="flex items-baseline gap-1.5 px-3">
+                  <span className="text-3xl font-black text-brand-900 dark:text-white ltr-nums">{heroPrice}</span>
+                  <span className="text-sm font-bold text-brand-700 dark:text-cyan-300">د.ل</span>
+                  {heroOldPrice && (
+                    <span className="text-sm text-slate-400 line-through ms-2 ltr-nums">{heroOldPrice} د.ل</span>
+                  )}
+                </div>
+
+                <div className="h-8 w-px bg-slate-200 dark:bg-slate-800 hidden sm:block" />
+
+                <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 px-2">
+                  <CheckCircle2 className="size-4" />
+                  <span>توصيل لكافة المدن الليبية · كاش عند الاستلام أو تحويل مصرفي عبر واتساب</span>
+                </div>
+              </motion.div>
+
+              {/* CTA Action Buttons */}
+              <motion.div
+                variants={fadeInUp}
+                className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center w-full sm:w-auto"
+              >
+                <Link
+                  to="/product/h2o-floss"
+                  className="group relative inline-flex items-center justify-center gap-3 rounded-full bg-gradient-to-r from-brand-800 to-brand-900 px-8 py-4 text-base font-bold text-white shadow-xl shadow-brand-900/30 transition-all hover:scale-105 active:scale-95 dark:from-brand-600 dark:to-cyan-600"
+                >
+                  <ShoppingBag className="size-5 transition-transform group-hover:-translate-y-0.5" />
+                  <span>اطلب الآن — الدفع عند الاستلام (كاش)</span>
+                </Link>
+
+                <a
+                  href="#demo-video"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-300 bg-white/90 px-6 py-4 text-sm font-bold text-slate-700 shadow-sm backdrop-blur-md transition-all hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+                >
+                  <Play className="size-4 text-brand-600 dark:text-cyan-400" />
+                  <span>مشاهدة فيديو التجربة</span>
+                </a>
+              </motion.div>
             </motion.div>
           </div>
         </div>
