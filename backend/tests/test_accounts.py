@@ -36,7 +36,7 @@ def test_role_is_a_label_not_a_gate():
     root = Path(__file__).resolve().parent.parent
     hits = subprocess.run(
         ["grep", "-rn", r"\.role ==", str(root / "apps"), "--include=*.py"],
-        capture_output=True, text=True,
+        capture_output=True, text=True, check=False,  # grep exits 1 on no matches — the happy path
     ).stdout
     # The label helper on the model itself is allowed; gates are not.
     offenders = [

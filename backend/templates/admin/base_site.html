@@ -2,3 +2,8 @@
 {% load static %}
 
 {% block title %}H2O Floss — {{ title }}{% endblock %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+{% endblock %}

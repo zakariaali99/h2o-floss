@@ -131,6 +131,18 @@ REST_FRAMEWORK = {
     },
 }
 
+# ---------------------------------------------------------------- SimpleJWT
+# Dashboard sessions: an 8-hour access token (a work shift) with a 7-day refresh,
+# so the admin isn't bounced to the login screen every few minutes.
+from datetime import timedelta  # noqa: E402
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=8),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ROTATE_REFRESH_TOKENS": True,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+}
+
 # ---------------------------------------------------------------- CORS
 # In development the Vite dev server proxies /api and /media, so the browser sees a
 # single origin and CORS never fires. These origins matter for a split-origin deploy.

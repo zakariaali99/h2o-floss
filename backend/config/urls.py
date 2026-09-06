@@ -16,8 +16,10 @@ admin.site.index_title = "لوحة التحكم"
 
 v1_patterns = [
     path("", include(core_urlpatterns)),
-    # P2: path("catalog/", include("apps.catalog.urls")),
-    # P3: path("cart/", include("apps.cart.urls")), path("orders/", include("apps.orders.urls")),
+    path("auth/", include("apps.accounts.urls")),
+    path("catalog/", include("apps.catalog.urls")),
+    path("cart/", include("apps.cart.urls")),
+    path("", include("apps.orders.urls")),
 ]
 
 urlpatterns = [
