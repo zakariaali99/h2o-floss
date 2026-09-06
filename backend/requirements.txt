@@ -11,3 +11,4 @@ bleach>=6.2,<7
 # Arabic invoice PDF generation (pure-Python, shared-hosting safe)
 fpdf2==2.8.8
 uharfbuzz==0.56.1
+whitenoise==6.7.0

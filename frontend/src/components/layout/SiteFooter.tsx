@@ -86,10 +86,15 @@ export function SiteFooter() {
                 <MapPin className="size-4 text-brand-600 dark:text-cyan-400" />
                 <span>ليبيا — التوزيع والتوصيل لجميع المدن</span>
               </div>
-              <div className="flex items-center gap-2">
+              <a
+                href={`https://wa.me/${(storeCfg?.store_whatsapp || '218910000000').replace(/\D/g, '')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 transition-colors hover:text-emerald-600 dark:hover:text-emerald-400"
+              >
                 <Phone className="size-4 text-brand-600 dark:text-cyan-400" />
                 <span className="ltr-nums font-semibold" dir="ltr">{phone}</span>
-              </div>
+              </a>
               <div className="flex items-center gap-2">
                 <Headset className="size-4 text-brand-600 dark:text-cyan-400" />
                 <span>خدمة العملاء متوفرة يومياً عبر واتساب والهاتف</span>

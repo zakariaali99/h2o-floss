@@ -51,6 +51,8 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    # Serve the built frontend (backend/dist) — assets like /assets, /brand, /images, /video.
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -105,6 +107,15 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# --- Frontend build served by the backend (Vite dist) ---
+# WhiteNoise serves the built SPA assets from backend/dist at the site root, so
+# /assets/*, /brand/*, /images/*, /video/* resolve. Deep links (e.g. /dashboard)
+# are handled by the SPA catch-all view in config/urls.py.
+FRONTEND_DIST = BASE_DIR / "dist"
+if FRONTEND_DIST.exists():
+    WHITENOISE_ROOT = FRONTEND_DIST
+    WHITENOISE_INDEX_FILE = True
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
