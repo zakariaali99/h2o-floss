@@ -1,9 +1,18 @@
 """Production settings. Requires a real .env (SECRET_KEY, ALLOWED_HOSTS, DATABASE_URL)."""
+from pathlib import Path
+
 from .base import *  # noqa: F403
 
 DEBUG = False
 SECRET_KEY = env("SECRET_KEY")  # noqa: F405  -> fails fast when unset
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")  # noqa: F405
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])  # noqa: F405
+
+# Point STATIC_ROOT / MEDIA_ROOT at public_html on shared hosting so Apache
+# serves them directly (no Passenger hit for images or admin CSS). Overridable
+# via env; default is BASE_DIR-relative (works fine when Django serves them).
+STATIC_ROOT = Path(env("STATIC_ROOT", default=str(STATIC_ROOT)))  # noqa: F405
+MEDIA_ROOT = Path(env("MEDIA_ROOT", default=str(MEDIA_ROOT)))  # noqa: F405
 
 SECURE_SSL_REDIRECT = env.bool("SECURE_SSL_REDIRECT", default=True)  # noqa: F405
 SESSION_COOKIE_SECURE = True
