@@ -410,7 +410,10 @@ export function ProductDetailPage() {
           className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-sm animate-in fade-in duration-200"
           onClick={() => setZoomModalOpen(false)}
         >
-          <div className="relative max-w-3xl max-h-[90vh] rounded-3xl bg-white p-4 dark:bg-slate-900">
+          <div
+            className="relative max-w-3xl max-h-[90vh] rounded-3xl bg-white p-4 dark:bg-slate-900"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
               type="button"
               onClick={() => setZoomModalOpen(false)}

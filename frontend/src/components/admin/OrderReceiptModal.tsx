@@ -14,8 +14,8 @@ export function OrderReceiptModal({ order, onClose }: OrderReceiptModalProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="relative w-full max-w-2xl rounded-3xl bg-white p-8 shadow-2xl dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-xs animate-in fade-in duration-200" onClick={onClose}>
+      <div className="relative w-full max-w-2xl rounded-3xl bg-white p-8 shadow-2xl dark:bg-slate-900 border border-slate-200 dark:border-slate-800" onClick={(e) => e.stopPropagation()}>
         {/* Action Header */}
         <div className="flex items-center justify-between border-b border-slate-200 pb-4 dark:border-slate-800">
           <div className="flex items-center gap-2">

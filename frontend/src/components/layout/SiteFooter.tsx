@@ -78,7 +78,7 @@ export function SiteFooter() {
               <img src="/brand/logo-white.png" alt="H2O Floss ليبيا" className="hidden h-10 w-auto dark:block" />
             </div>
             <p className="mt-4 max-w-md text-sm leading-relaxed text-slate-600 dark:text-slate-400">
-              الوكيل المعتمد لجهاز تنظيف الأسنان المائي H2O Floss في ليبيا. تقنية النبضات المائية المتقدمة
+              منصة معتمدة من شركة H2O Floss العالمية في ليبيا. تقنية النبضات المائية المتقدمة
               لإزالة البلاك وحماية اللثة والتخلص من بقايا الطعام بفاعلية ولطف.
             </p>
             <div className="mt-4 flex flex-col gap-2 text-xs text-slate-500 dark:text-slate-400">

@@ -24,3 +24,6 @@ coverage.xml
 htmlcov/
 .pytest_cache/
 .ruff_cache/
+
+# Track the frontend build served by the backend
+!backend/dist/

@@ -405,8 +405,8 @@ ${itemsText}
 
       {/* Order details modal */}
       {viewingOrderDetails && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs">
-          <div className="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl dark:bg-slate-900 border border-slate-200 dark:border-slate-800 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs" onClick={() => setViewingOrderDetails(null)}>
+          <div className="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl dark:bg-slate-900 border border-slate-200 dark:border-slate-800 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between border-b border-slate-100 pb-4 dark:border-slate-800">
               <h3 className="text-base font-bold text-slate-900 dark:text-white">
                 تفاصيل الطلب: <span className="text-brand-900 dark:text-cyan-300">{viewingOrderDetails.number}</span>
@@ -499,8 +499,8 @@ ${itemsText}
 
       {/* Status change modal */}
       {editingOrder && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs">
-          <div className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs" onClick={() => setEditingOrder(null)}>
+          <div className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl dark:bg-slate-900 border border-slate-200 dark:border-slate-800" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between border-b border-slate-100 pb-3 dark:border-slate-800">
               <h3 className="text-base font-bold text-slate-900 dark:text-white">تحديث حالة الطلب: {editingOrder.number}</h3>
               <button type="button" onClick={() => setEditingOrder(null)} className="text-slate-400 hover:text-slate-600">
@@ -535,8 +535,8 @@ ${itemsText}
 
       {/* Admin note modal */}
       {noteOrder && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs">
-          <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-xs" onClick={() => setNoteOrder(null)}>
+          <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl dark:bg-slate-900 border border-slate-200 dark:border-slate-800" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between border-b border-slate-100 pb-4 dark:border-slate-800">
               <h3 className="text-base font-bold text-slate-900 dark:text-white">ملاحظات المندوب للطلب: {noteOrder.number}</h3>
               <button type="button" onClick={() => setNoteOrder(null)} className="text-slate-400 hover:text-slate-600">
