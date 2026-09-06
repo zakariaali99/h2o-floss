@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Design tokens lifted from reference/h2ofloss.html (cyan-800 brand, sky accents). */
 @theme {
   --font-sans: 'Cairo', 'Tajawal', ui-sans-serif, system-ui, sans-serif;
@@ -7,22 +9,33 @@
   --color-brand-50: #ecfeff;
   --color-brand-100: #cffafe;
   --color-brand-200: #a5f3fc;
+  --color-brand-300: #67e8f9;
   --color-brand-400: #22d3ee;
   --color-brand-500: #06b6d4;
   --color-brand-600: #0891b2;
   --color-brand-700: #0e7490;
   --color-brand-800: #0c4a6e;
   --color-brand-900: #082f49;
+  --color-brand-950: #041f31;
+
+  --color-accent-50: #f0f9ff;
+  --color-accent-100: #e0f2fe;
+  --color-accent-500: #0ea5e9;
 
   --color-surface: #f8fafc;
   --color-surface-dark: #0f172a;
 
   --radius-card: 1.5rem;
+  --radius-3xl: 2rem;
 }
 
 @layer base {
   html {
     scroll-behavior: smooth;
+  }
+
+  ::selection {
+    @apply bg-brand-500/20 text-brand-900 dark:bg-brand-400/30 dark:text-brand-100;
   }
 
   body {
@@ -33,6 +46,15 @@
   .ltr-nums {
     direction: ltr;
     unicode-bidi: isolate;
+  }
+
+  /* Clean scrollbar suppression for horizontal rails */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }
 

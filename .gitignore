@@ -6,8 +6,11 @@ venv/
 *.sqlite3
 .env
 staticfiles/
-media/*
-!media/.gitkeep
+# Seeded product photos: copied out of ../reference by `manage.py seed_store`.
+# Patterns containing a slash are anchored to the repo root, so `media/*` here
+# silently matched nothing — backend/media/ is where Django actually writes.
+backend/media/*
+!backend/media/.gitkeep
 # node
 node_modules/
 dist/

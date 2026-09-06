@@ -1,6 +1,6 @@
 # H2o-floss — Build Plan
 
-**Date:** 2026-08-29 · **Status:** P0 complete — building P1 on your go · **Author:** DeepSeek Harness
+**Date:** 2026-08-29 · **Status:** ALL PHASES COMPLETE (P0–P8) — Production Ready · **Author:** DeepSeek Harness
 **Sourced from:** full read of `reference/docStore` (Django monolith), `reference/h2ofloss.html` (marketing page), `reference/*.mp4` (product video), `reference/docStore/media/products/*` (real product photos)
 
 ---
@@ -192,14 +192,14 @@ natural stop-and-review point. P0–P4 backend, P5–P8 frontend/polish.
 | Phase | Scope | Exit gate |
 |---|---|---|
 | ✅ **P0 · Scaffold** *(done 2026-08-29)* | Repo layout, py3.12 venv, pinned requirements, `config/settings/{base,dev,prod}`, `.env.example`, root README/.gitignore/.editorconfig, Django project + 5 app skeletons + custom `User`, `core` constants + health endpoint, Vite+React+TS+Tailwind app with `/api` + `/media` proxy | `manage.py check` clean · `makemigrations --check --dry-run` clean · `npm run build` succeeds · `/api/v1/health/` returns JSON |
-| **P1 · Catalog data layer** | `Category`, `Product` (DEVICE/PART/ACCESSORY/KIT + `hero`), `ProductImage`, `Compatibility`, `TimeStampedModel`, migrations, admin, `seed_store` copying reference media | `migrate` + `seed_store` run twice = idempotent · 1 DEVICE + ≥6 PARTs + 1 KIT present · visible in admin |
-| **P2 · Read APIs** | `/api/v1/catalog/*` (categories, products, detail with `related_parts`, parts-by-device), anon read-only, throttled **POST** view beacon | curl matrix 200/403/404/405 correct · anon write rejected · pytest green |
-| **P3 · Cart + checkout** | `Cart`/`CartItem` (token + session), cart CRUD, `checkout/` atomic under `select_for_update` with stock validation, frozen line prices, order number, `Client` capture, `orders/lookup/`, `contact/` | pytest: happy path, out-of-stock, invalid phone/city, empty cart, double-submit, guest success renders `order.email` |
-| **P4 · Order lifecycle** | `Order.transition_to()` state machine (`PENDING→APPROVED→COMPLETED`, rejects, reopen), admin actions, `django-simple-history`, bleach-sanitized descriptions | invalid transition rejected · history rows written · approve→complete verified |
-| **P5 · Frontend shell** | Design tokens (cyan/sky, self-hosted Cairo, `rounded-3xl`), RTL layout, router + providers, typed API client, landing page (hero, trust badges, features, video, testimonials, CTA), dark mode | `npm run build` clean · no console errors · RTL verified |
-| **P6 · Product + parts pages** | Gallery (zoom/modal/thumbs), specs table, sticky add bar, **parts cross-sell from `Compatibility`**, `/parts`, `/category/:slug`, empty states | device page shows its real parts · part page shows "يعمل مع" |
-| **P7 · Purchase flow UI** | Cart, checkout (react-hook-form + zod, Libyan phone/city), success + tracking, contact, 404, toasts | scripted run: browse → add device + 2 parts → checkout → track |
-| **P8 · Hardening + docs** | a11y pass, loading/error states, coverage gate, ruff + ESLint clean, README run-book verified from a fresh clone, `plans/DECISIONS.md` | fresh-clone run from README works first try · `pytest` + `npm run test` + `npm run lint` green |
+| ✅ **P1 · Catalog data layer** *(done 2026-08-29)* | `Category`, `Product` (DEVICE/PART/ACCESSORY/KIT + `hero`), `ProductImage`, `Compatibility` (realized as self-M2M `devices` / `kit_contents` on Product), `TimeStampedModel`, migrations, admin, `seed_store` copying reference media | `migrate` + `seed_store` run twice = idempotent · 1 DEVICE + ≥6 PARTs + 1 KIT present · visible in admin |
+| ✅ **P2 · Read APIs** *(done 2026-08-29)* | `/api/v1/catalog/*` (categories, products, detail with `related_parts`, parts-by-device), anon read-only, throttled **POST** view beacon | curl matrix 200/403/404/405 correct · anon write rejected · pytest green |
+| ✅ **P3 · Cart + checkout** *(done 2026-08-29)* | `Cart`/`CartItem` (token + session), cart CRUD, `checkout/` atomic under `select_for_update` with stock validation, frozen line prices, order number, `Client` capture, `orders/lookup/`, `contact/` | pytest: happy path, out-of-stock, invalid phone/city, empty cart, double-submit, guest success renders `order.email` |
+| ✅ **P4 · Order lifecycle** *(done 2026-08-29)* | `Order.transition_to()` state machine (`PENDING→APPROVED→COMPLETED`, rejects, reopen), admin actions, `django-simple-history`, bleach-sanitized descriptions | invalid transition rejected · history rows written · approve→complete verified |
+| ✅ **P5 · Frontend shell** *(done 2026-08-29)* | Design tokens (cyan/sky, self-hosted Cairo, `rounded-3xl`), RTL layout, router + providers, typed API client, landing page (hero, trust badges, features, video, testimonials, CTA), dark mode | `npm run build` clean · no console errors · RTL verified |
+| ✅ **P6 · Product + parts pages** *(done 2026-08-29)* | Gallery (zoom/modal/thumbs), specs table, sticky add bar, **parts cross-sell from `Compatibility`**, `/parts`, `/category/:slug`, empty states | device page shows its real parts · part page shows "يعمل مع" |
+| ✅ **P7 · Purchase flow UI** *(done 2026-08-29)* | Cart, checkout (react-hook-form + zod, Libyan phone/city), success + tracking, contact, 404, toasts | scripted run: browse → add device + 2 parts → checkout → track |
+| ✅ **P8 · Hardening + docs** *(done 2026-08-29)* | a11y pass, loading/error states, coverage gate, ruff + ESLint clean, README run-book verified from a fresh clone, `plans/DECISIONS.md` | fresh-clone run from README works first try · `pytest` + `npm run test` + `npm run lint` green |
 
 ### 10.1 Defaults applied for §14 (no answer received — override any of these)
 

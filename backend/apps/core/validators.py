@@ -30,6 +30,7 @@ def validate_libyan_phone(value: str) -> str:
 
 
 def validate_city(value: str) -> str:
-    if value not in CITY_CODES:
+    cleaned = (value or "").strip().lower()
+    if cleaned not in CITY_CODES:
         raise ValidationError(_("اختر مدينة من القائمة المعتمدة"), code="invalid")
-    return value
+    return cleaned
