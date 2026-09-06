@@ -84,6 +84,14 @@ npm run typecheck
 npm run build
 ```
 
+### Build the frontend into the backend (single-app serving)
+Django serves the built SPA from `backend/dist` (via WhiteNoise + an SPA catch-all).
+After any frontend change — and as part of deploy — run:
+```bash
+./scripts/build-frontend.sh
+```
+This installs deps, builds the frontend, copies it into `backend/dist`, and strips source maps.
+
 ---
 
 ## 📁 Repository Structure
