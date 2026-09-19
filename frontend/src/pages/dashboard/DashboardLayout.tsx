@@ -7,6 +7,7 @@ import { setOnAuthLost } from '../../api/client'
 import { ordersApi } from '../../api/orders'
 import { useAuthStore } from '../../features/auth/authStore'
 import { ThemeToggle } from '../../components/layout/ThemeToggle'
+import { ScrollToTop } from '../../components/system/ScrollToTop'
 
 const navItems = [
   { to: '/dashboard', end: true, label: 'الطلبات والشحن', icon: LayoutDashboard },
@@ -96,6 +97,7 @@ export function DashboardLayout() {
 
   return (
     <div className="min-h-screen bg-[#f8fafc] text-[#0a2540] dark:bg-slate-950 dark:text-slate-100 flex">
+      <ScrollToTop />
       {/* Desktop rail */}
       <aside className="hidden lg:flex flex-col w-64 border-e border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900 shrink-0">
         {SidebarBody}

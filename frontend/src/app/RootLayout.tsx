@@ -5,6 +5,8 @@ import { setOnAuthLost } from '../api/client'
 import { useAuthStore } from '../features/auth/authStore'
 import { SiteFooter } from '../components/layout/SiteFooter'
 import { SiteHeader } from '../components/layout/SiteHeader'
+import { ScrollToTop } from '../components/system/ScrollToTop'
+import { FloatingOrderCTA } from '../components/widgets/FloatingOrderCTA'
 
 export function RootLayout() {
   const navigate = useNavigate()
@@ -21,10 +23,12 @@ export function RootLayout() {
 
   return (
     <div className="flex min-h-dvh flex-col">
+      <ScrollToTop />
       <SiteHeader />
       <main className="flex-1">
         <Outlet />
       </main>
+      <FloatingOrderCTA />
       <SiteFooter />
     </div>
   )

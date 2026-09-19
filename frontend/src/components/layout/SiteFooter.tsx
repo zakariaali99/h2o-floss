@@ -51,8 +51,8 @@ export function SiteFooter() {
               <Banknote className="size-6" />
             </div>
             <div>
-              <h4 className="text-sm font-bold text-slate-900 dark:text-white">الدفع كاش عند الاستلام</h4>
-              <p className="text-xs text-slate-500 dark:text-slate-400">عاين جهازك وتأكد منه قبل السداد</p>
+              <h4 className="text-sm font-bold text-slate-900 dark:text-white">دفع مرن وميسر</h4>
+              <p className="text-xs text-slate-500 dark:text-slate-400">كاش عند الاستلام أو تحويل مصرفي عبر واتساب</p>
             </div>
           </div>
 

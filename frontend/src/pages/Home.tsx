@@ -85,7 +85,7 @@ const features = [
 const faqs = [
   {
     q: 'كيف تتم عملية الدفع والتوصيل؟',
-    a: 'التوصيل سريع لكافة مدن ومناطق ليبيا خلال 24-48 ساعة. الدفع يكون نقداً (كاش) عند الاستلام بعد معاينة وفحص الجهاز مع مندوب التوصيل. كما يمكنك الدفع عبر تحويل مصرفي من خلال واتساب.',
+    a: 'التوصيل سريع لكافة مدن ومناطق ليبيا خلال 24-48 ساعة. نوفر خيارات دفع مرنة تشمل الدفع نقداً (كاش) عند الاستلام أو تحويل مصرفي عبر واتساب بعد معاينة وفحص الجهاز مع مندوب التوصيل.',
   },
   {
     q: 'هل جهاز H2O Floss مناسب لأصحاب تقويم الأسنان والزراعة؟',
@@ -289,7 +289,7 @@ export function Home() {
 
                 <div className="flex items-center gap-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 px-2">
                   <CheckCircle2 className="size-4" />
-                  <span>توصيل لكافة المدن الليبية · كاش عند الاستلام أو تحويل مصرفي عبر واتساب</span>
+                  <span>توصيل لكافة مدن ومناطق ليبيا خلال 24-48 ساعة</span>
                 </div>
               </motion.div>
 
@@ -303,7 +303,7 @@ export function Home() {
                   className="group relative inline-flex items-center justify-center gap-3 rounded-full bg-gradient-to-r from-brand-800 to-brand-900 px-8 py-4 text-base font-bold text-white shadow-xl shadow-brand-900/30 transition-all hover:scale-105 active:scale-95 dark:from-brand-600 dark:to-cyan-600"
                 >
                   <ShoppingBag className="size-5 transition-transform group-hover:-translate-y-0.5" />
-                  <span>اطلب الآن — الدفع عند الاستلام (كاش)</span>
+                  <span>اطلب الجهاز الآن</span>
                 </Link>
 
                 <a
@@ -342,7 +342,7 @@ export function Home() {
               },
               {
                 icon: Banknote,
-                title: 'الدفع عند الاستلام كاش',
+                title: 'دفع مرن · كاش أو تحويل مصرفي عبر واتساب',
                 desc: 'فحص ومعاينة الجهاز قبل السداد',
               },
               {
@@ -478,8 +478,8 @@ export function Home() {
               </div>
               <h3 className="mt-4 text-base font-bold text-slate-900 dark:text-white">التوصيل السريع</h3>
               <p className="mt-2 text-xs sm:text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-                التوصيل سريع لكافة مدن ومناطق ليبيا خلال 24-48 ساعة. الدفع يكون نقداً (كاش) عند الاستلام بعد معاينة وفحص
-                الجهاز مع مندوب التوصيل.
+                التوصيل سريع لكافة مدن ومناطق ليبيا خلال 24-48 ساعة. خيارات دفع مرنة تشمل الدفع نقداً (كاش) عند الاستلام بعد
+                فحص ومعاينة الجهاز مع مندوب التوصيل أو تحويل مصرفي وتأكيده عبر واتساب.
               </p>
             </div>
 
@@ -491,11 +491,11 @@ export function Home() {
               <ul className="mt-2 space-y-1.5 text-xs sm:text-sm leading-relaxed text-slate-600 dark:text-slate-300">
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600" />
-                  <span>الدفع نقداً (كاش) عند الاستلام.</span>
+                  <span>الدفع نقداً (كاش) عند الاستلام بعد معاينة الجهاز.</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600" />
-                  <span>كما يمكنك الدفع عبر تحويل مصرفي من خلال واتساب.</span>
+                  <span>تحويل مصرفي فوري عبر تطبيق المصرف وتأكيده عبر واتساب.</span>
                 </li>
               </ul>
             </div>

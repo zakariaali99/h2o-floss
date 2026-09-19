@@ -43,7 +43,7 @@ def build_customer_whatsapp_message(order: Order, settings: StoreSettings) -> st
     if not items_text:
         items_text = "• جهاز H2O Floss الأصلي"
 
-    shipping_text = "مجاني لكافة المدن" if str(order.shipping) == "0.00" else f"{order.shipping} د.ل"
+    shipping_text = "—" if str(order.shipping) in ("0.00", "0") else f"{order.shipping} د.ل"
 
     if order.payment_method == Order.PAYMENT_BANK:
         return (

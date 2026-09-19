@@ -210,7 +210,7 @@ export function ProductDetailPage() {
                 )}
 
                 <div className="w-full text-xs font-semibold text-slate-500 dark:text-slate-400">
-                  ⚡ شحن وتوصيل لكافة المدن والمناطق في ليبيا · الدفع كاش عند الاستلام
+                  ⚡ شحن وتوصيل لكافة المدن والمناطق في ليبيا · كاش عند الاستلام أو تحويل مصرفي عبر واتساب
                 </div>
               </div>
 
@@ -274,7 +274,7 @@ export function ProductDetailPage() {
                   className="flex flex-1 items-center justify-center gap-2 rounded-full bg-brand-800 px-8 py-4 text-base font-bold text-white shadow-lg shadow-brand-900/20 transition-all hover:bg-brand-700 active:scale-95 dark:bg-brand-600 dark:hover:bg-brand-500 cursor-pointer"
                 >
                   <ShoppingBag className="size-5" />
-                  <span>إضافة للسلة والطلب (كاش)</span>
+                  <span>إضافة للسلة والطلب</span>
                 </button>
               </div>
 
@@ -366,8 +366,7 @@ export function ProductDetailPage() {
                   البيضاء، سبها، الخمس، زليتن...) خلال 24-48 ساعة.
                 </p>
                 <p>
-                  <strong>طريقة الدفع:</strong> يتم سداد قيمة الطلب نقداً (كاش بالدينار الليبي) لمندوب التوصيل بعد معاينة
-                  الجهاز وفحصه والتأكد من سلامته.
+                  <strong>طريقة الدفع:</strong> نوفر خيارات دفع مرنة: نقداً (كاش) عند الاستلام بعد معاينة الجهاز، أو عبر تحويل مصرفي وتأكيده عبر واتساب.
                 </p>
                 <p>
                   <strong>الأصالة والجودة:</strong> نضمن لك الحصول على جهاز H2O Floss الأصلي المعتمد بالعلبة المصنعية الكاملة.
@@ -399,7 +398,7 @@ export function ProductDetailPage() {
             className="flex items-center gap-2 rounded-full bg-brand-800 px-6 py-3 text-sm font-bold text-white shadow-md active:scale-95 cursor-pointer"
           >
             <ShoppingBag className="size-4" />
-            <span>طلب الآن (كاش)</span>
+            <span>طلب الجهاز الآن</span>
           </button>
         </div>
       </div>

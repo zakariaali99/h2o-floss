@@ -106,7 +106,7 @@ def build_invoice_pdf(order: Order) -> bytes:
     pdf.ln(3)
 
     # --- Totals ---
-    shipping_txt = "مجاني" if str(order.shipping) == "0.00" else f"{order.shipping} د.ل"
+    shipping_txt = "—" if str(order.shipping) in ("0.00", "0") else f"{order.shipping} د.ل"
     for label, value, bold in [
         ("المجموع الفرعي", f"{order.subtotal} د.ل", False),
         ("الشحن", shipping_txt, False),
