@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import {
   ArrowLeft,
@@ -12,17 +12,22 @@ import {
 } from 'lucide-react'
 
 import { ordersApi } from '../api/orders'
+import type { OrderData } from '../api/types'
 
 export function OrderSuccessPage() {
   const { number = '' } = useParams<{ number: string }>()
+  const location = useLocation()
+  const navigationOrder = (location.state as { order?: OrderData } | null)?.order
   const [copiedOrder, setCopiedOrder] = useState(false)
+  const [phone, setPhone] = useState(navigationOrder?.phone ?? '')
+  const [lookupEnabled, setLookupEnabled] = useState(Boolean(navigationOrder))
 
-  // 1. Fetch order details
-  const { data: order } = useQuery({
-    queryKey: ['order-success', number],
-    queryFn: () => ordersApi.lookupOrder(number, ''),
-    enabled: Boolean(number),
-    retry: 2,
+  const { data: order, isError, isFetching } = useQuery({
+    queryKey: ['order-success', number, phone],
+    queryFn: () => ordersApi.lookupOrder(number, phone),
+    enabled: lookupEnabled && Boolean(number) && Boolean(phone),
+    retry: false,
+    initialData: navigationOrder,
   })
 
   // 2. Fetch live store settings (only the public store WhatsApp number is used here)
@@ -93,6 +98,38 @@ export function OrderSuccessPage() {
           </button>
         </div>
       </div>
+
+      {!order && (
+        <form
+          className="mt-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-xs dark:border-slate-800 dark:bg-slate-900"
+          onSubmit={(event) => {
+            event.preventDefault()
+            setLookupEnabled(/^09\d{8}$/.test(phone.trim()))
+          }}
+        >
+          <h2 className="text-sm font-bold text-slate-900 dark:text-white">تحقق من ملكية الطلب</h2>
+          <p className="mt-1 text-xs text-slate-500">أدخل رقم الهاتف المسجل في الطلب لعرض تفاصيله.</p>
+          <input
+            type="tel"
+            dir="ltr"
+            value={phone}
+            onChange={(event) => {
+              setPhone(event.target.value)
+              setLookupEnabled(false)
+            }}
+            placeholder="0912345678"
+            className="mt-4 w-full rounded-xl border border-slate-300 px-4 py-3 text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+          />
+          {isError && <p className="mt-2 text-xs text-rose-600">رقم الطلب أو رقم الهاتف غير صحيح.</p>}
+          <button
+            type="submit"
+            disabled={isFetching || !/^09\d{8}$/.test(phone.trim())}
+            className="mt-4 w-full rounded-full bg-brand-800 py-3 text-sm font-bold text-white disabled:opacity-50"
+          >
+            {isFetching ? 'جاري التحقق...' : 'عرض تفاصيل الطلب'}
+          </button>
+        </form>
+      )}
 
       {/* 2. OPTIONAL DIRECT SUPPORT BUTTON */}
       <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 rounded-3xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900 shadow-xs">
@@ -213,10 +250,11 @@ export function OrderSuccessPage() {
       {/* 5. ACTIONS NAVIGATION */}
       <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
         <Link
-          to={`/track?phone=${encodeURIComponent(order?.phone || '')}`}
+          to="/track"
+          state={order ? { order } : undefined}
           className="flex w-full items-center justify-center gap-2 rounded-full border border-slate-300 px-6 py-3.5 text-xs font-bold text-slate-700 hover:bg-slate-50 sm:w-auto dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
         >
-          <span>تتبع حالة الشحنة برقم هاتفك</span>
+          <span>تتبع حالة الشحنة</span>
         </Link>
 
         <Link

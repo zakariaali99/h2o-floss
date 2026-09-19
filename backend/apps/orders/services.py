@@ -17,7 +17,7 @@ from apps.cart.models import Cart
 from apps.cart.services import shipping_rate
 from apps.catalog.models import Product
 
-from .models import Client, Order, OrderItem
+from .models import Client, Order, OrderItem, OrderNotificationJob
 
 
 @transaction.atomic
@@ -88,36 +88,8 @@ def create_order_from_cart(cart: Cart | None, data: dict, *, user=None) -> Order
         )
         for pid, qty in line_specs
     )
+    OrderNotificationJob.objects.create(order=order)
     if cart:
         cart.delete()  # clear session cart once finalized
 
-    _dispatch_notifications(order)
     return order
-
-
-def _dispatch_notifications(order: Order) -> None:
-    """Fire manager notifications (Telegram, and WhatsApp if a gateway is wired).
-
-    Never let a notification failure roll back or break a saved order.
-    """
-    import logging
-
-    log = logging.getLogger(__name__)
-
-    # Telegram — the working path on shared hosting.
-    try:
-        from .telegram import send_order_telegram_notifications
-
-        send_order_telegram_notifications(order)
-    except Exception as exc:
-        log.warning("Telegram dispatch error: %s", exc)
-
-    # WhatsApp — only if a self-hosted gateway is actually configured.
-    try:
-        from apps.core.models import StoreSettings
-        from .whatsapp import send_automatic_order_notifications
-
-        if (StoreSettings.get_settings().whatsapp_gateway_url or "").strip():
-            send_automatic_order_notifications(order)
-    except Exception as exc:
-        log.warning("WhatsApp automated dispatch error: %s", exc)

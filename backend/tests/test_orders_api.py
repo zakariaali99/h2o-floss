@@ -12,6 +12,7 @@ import re
 from decimal import Decimal
 
 import pytest
+from django.core.management import call_command
 from django.utils import timezone
 
 from apps.catalog.models import Product
@@ -109,6 +110,22 @@ def test_checkout_empty_cart_rejected(seeded, api_client):
 
 
 @pytest.mark.django_db
+def test_checkout_rejects_duplicate_product_lines(seeded, api_client):
+    product = Product.objects.get(slug="h2o-floss")
+    response = checkout(
+        api_client,
+        items=[
+            {"product_id": product.pk, "quantity": 1},
+            {"product_id": product.pk, "quantity": 1},
+        ],
+    )
+
+    assert response.status_code == 400
+    assert Order.objects.count() == 0
+    assert "items" in response.json()["fields"]
+
+
+@pytest.mark.django_db
 def test_checkout_double_submit_fails_closed(seeded, api_client, cart_with_items):
     assert checkout(api_client).status_code == 201
     second = checkout(api_client)
@@ -145,18 +162,23 @@ def test_order_persists_number_and_timestamps(seeded, api_client, cart_with_item
 
 
 @pytest.mark.django_db
-def test_order_lookup_flexible_by_phone_or_number(seeded, api_client, cart_with_items):
+def test_order_lookup_requires_matching_number_and_phone(seeded, api_client, cart_with_items):
     number = checkout(api_client).json()["number"]
-    # empty lookup returns 400
-    assert api_client.get("/api/v1/orders/lookup/").status_code == 400
-    # lookup by phone alone succeeds
-    phone_res = api_client.get("/api/v1/orders/lookup/?phone=0914076123")
-    assert phone_res.status_code == 200
-    assert phone_res.json()["number"] == number
-    # lookup by number alone succeeds
-    num_res = api_client.get(f"/api/v1/orders/lookup/?number={number}")
-    assert num_res.status_code == 200
-    assert num_res.json()["number"] == number
+
+    missing_phone = api_client.get(f"/api/v1/orders/lookup/?number={number}")
+    missing_number = api_client.get("/api/v1/orders/lookup/?phone=0914076123")
+    wrong_phone = api_client.get(
+        f"/api/v1/orders/lookup/?number={number}&phone=0999999999"
+    )
+    found = api_client.get(
+        f"/api/v1/orders/lookup/?number={number}&phone=0914076123"
+    )
+
+    assert missing_phone.status_code == 400
+    assert missing_number.status_code == 400
+    assert wrong_phone.status_code == 404
+    assert found.status_code == 200
+    assert found.json()["number"] == number
 
 
 @pytest.mark.django_db
@@ -213,6 +235,7 @@ def test_orders_are_visible_in_admin(seeded, client, api_client, admin_user, car
     for url in (
         "/admin/orders/order/",
         f"/admin/orders/order/{order.pk}/change/",
+        "/admin/orders/ordernotificationjob/",
         "/admin/orders/client/",
         "/admin/orders/contactmessage/",
     ):
@@ -239,8 +262,10 @@ def test_checkout_without_email_and_bank_transfer(seeded, api_client, cart_with_
     assert data["email"] == ""
     assert data["full_name"] == "علي محمد"
 
-    # Verify order lookup by phone
-    lookup = api_client.get("/api/v1/orders/lookup/?phone=0925551234")
+    # Verify order lookup with both customer-held identifiers.
+    lookup = api_client.get(
+        f"/api/v1/orders/lookup/?number={data['number']}&phone=0925551234"
+    )
     assert lookup.status_code == 200
     assert lookup.json()["number"] == data["number"]
 
@@ -340,6 +365,7 @@ def test_automatic_whatsapp_order_dispatch(seeded, api_client, cart_with_items):
     )
     assert res.status_code == 201
     order_number = res.json()["number"]
+    call_command("dispatch_order_notifications", limit=10)
 
     # Manager-only dispatch: entries for Store + Managers, and NONE for the customer.
     logs = WhatsAppMessageLog.objects.filter(order_number=order_number)
@@ -405,6 +431,7 @@ def test_telegram_cash_order_sends_summary_and_invoice(seeded, api_client, cart_
     )
     assert res.status_code == 201
     order_number = res.json()["number"]
+    call_command("dispatch_order_notifications", limit=10)
 
     # Cash order → per chat: summary message + invoice document, NO bank message.
     assert len(messages) == 2          # 2 chats × summary
@@ -445,6 +472,7 @@ def test_telegram_bank_order_adds_bank_message(seeded, api_client, cart_with_ite
     )
     assert res.status_code == 201
     order_number = res.json()["number"]
+    call_command("dispatch_order_notifications", limit=10)
 
     # Bank order → per chat: summary + invoice + bank details message.
     assert len(messages) == 2          # summary + bank
@@ -459,8 +487,8 @@ def test_telegram_bank_order_adds_bank_message(seeded, api_client, cart_with_ite
 
 @pytest.mark.django_db
 def test_build_invoice_pdf_returns_pdf_bytes(seeded, api_client, cart_with_items):
-    from apps.orders.models import Order
     from apps.orders.invoice import build_invoice_pdf
+    from apps.orders.models import Order
 
     res = api_client.post(
         "/api/v1/checkout/",
@@ -590,5 +618,3 @@ def test_telegram_skipped_when_disabled(seeded, api_client, cart_with_items):
     )
     assert res.status_code == 201
     assert TelegramMessageLog.objects.filter(order_number=res.json()["number"]).count() == 0
-
-

@@ -18,7 +18,7 @@ from apps.cart.services import resolve_cart
 from apps.core.permissions import IsStoreAdmin
 from apps.core.validators import validate_libyan_phone
 
-from .models import ContactMessage, Order
+from .models import Order
 from .serializers import CheckoutSerializer, ContactSerializer, OrderSerializer
 from .services import create_order_from_cart
 
@@ -50,23 +50,21 @@ class OrderLookupView(APIView):
     def get(self, request):
         number = (request.query_params.get("number") or "").strip().upper()
         phone = (request.query_params.get("phone") or "").strip()
-        if not number and not phone:
+        if not number or not phone:
             raise ValidationError(
-                {"detail": "أدخل رقم الطلب أو رقم الهاتف لتتبع الطلب."}
+                {"detail": "رقم الطلب ورقم الهاتف مطلوبان لتتبع الطلب."}
             )
 
-        qs = Order.objects.all().prefetch_related("items")
-        if phone:
-            try:
-                norm_phone = validate_libyan_phone(phone)
-                qs = qs.filter(models.Q(phone=norm_phone) | models.Q(phone=phone))
-            except DjangoValidationError as exc:
-                if not number:
-                    raise ValidationError({"phone": exc.messages}) from exc
-        if number:
-            qs = qs.filter(number=number)
+        try:
+            normalized_phone = validate_libyan_phone(phone)
+        except DjangoValidationError as exc:
+            raise ValidationError({"phone": exc.messages}) from exc
 
-        order = qs.order_by("-created_at").first()
+        order = (
+            Order.objects.filter(number=number, phone=normalized_phone)
+            .prefetch_related("items")
+            .first()
+        )
         if order is None:
             raise NotFound("لا يوجد طلب مطابق لهذه البيانات.")
         return Response(OrderSerializer(order).data)
@@ -193,6 +191,7 @@ class StoreSettingsView(APIView):
 
     def get(self, request):
         from apps.core.models import StoreSettings
+
         from .serializers import StoreSettingsSerializer
 
         settings = StoreSettings.get_settings()
@@ -200,6 +199,7 @@ class StoreSettingsView(APIView):
 
     def patch(self, request):
         from apps.core.models import StoreSettings
+
         from .serializers import StoreSettingsSerializer
 
         settings = StoreSettings.get_settings()
@@ -294,4 +294,3 @@ class AdminCustomerListView(APIView):
                 "created_at": client.created_at,
             })
         return Response(data)
-

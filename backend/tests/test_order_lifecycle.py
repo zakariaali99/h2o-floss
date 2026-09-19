@@ -105,6 +105,15 @@ def test_invalid_transitions_are_refused(seeded, device, start, target):
 
 
 @pytest.mark.django_db
+def test_unknown_status_is_rejected_as_validation_error(order):
+    with pytest.raises(ValidationError):
+        order.transition_to("UNKNOWN")
+
+    order.refresh_from_db()
+    assert order.status == ORDER_STATUS_PENDING
+
+
+@pytest.mark.django_db
 def test_reject_from_pending_never_touches_stock(order, device):
     order.transition_to(ORDER_STATUS_REJECTED)
     assert order.status == ORDER_STATUS_REJECTED
@@ -123,6 +132,18 @@ def test_rejecting_an_approval_releases_stock_then_reopen(order, device):
     assert order.status == ORDER_STATUS_PENDING
 
     order.transition_to(ORDER_STATUS_APPROVED)  # reserve again, exactly once
+    assert stock_of(device) == SEEDED_DEVICE_STOCK - 2
+
+
+@pytest.mark.django_db
+def test_stale_order_instance_cannot_approve_twice(order, device):
+    first_reader = Order.objects.get(pk=order.pk)
+    stale_reader = Order.objects.get(pk=order.pk)
+
+    first_reader.transition_to(ORDER_STATUS_APPROVED)
+    with pytest.raises(ValidationError):
+        stale_reader.transition_to(ORDER_STATUS_APPROVED)
+
     assert stock_of(device) == SEEDED_DEVICE_STOCK - 2
 
 

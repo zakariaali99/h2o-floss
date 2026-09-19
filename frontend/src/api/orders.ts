@@ -16,11 +16,9 @@ export const ordersApi = {
     return api.post<OrderData>('/checkout/', payload)
   },
 
-  /** Lookup guest order by order number and/or phone number */
-  lookupOrder: async (number?: string, phone?: string): Promise<OrderData> => {
-    const params = new URLSearchParams()
-    if (number) params.set('number', number)
-    if (phone) params.set('phone', phone)
+  /** Lookup a guest order with both customer-held identifiers. */
+  lookupOrder: async (number: string, phone: string): Promise<OrderData> => {
+    const params = new URLSearchParams({ number, phone })
     return api.get<OrderData>(`/orders/lookup/?${params.toString()}`)
   },
 
@@ -114,4 +112,3 @@ export const ordersApi = {
     return api.delete<void>(`/admin/products/${id}/`)
   },
 }
-

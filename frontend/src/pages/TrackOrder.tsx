@@ -1,24 +1,23 @@
-import { useState, useEffect } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { AlertCircle, ArrowLeft, Phone, Search, Truck } from 'lucide-react'
 
 import { ordersApi } from '../api/orders'
 import type { OrderData } from '../api/types'
 
 export function TrackOrderPage() {
-  const [searchParams] = useSearchParams()
-  const initialPhone = searchParams.get('phone') || ''
-  const initialNumber = searchParams.get('number') || ''
+  const location = useLocation()
+  const navigationOrder = (location.state as { order?: OrderData } | null)?.order
 
-  const [phone, setPhone] = useState(initialPhone)
-  const [orderNumber, setOrderNumber] = useState(initialNumber)
+  const [phone, setPhone] = useState(navigationOrder?.phone ?? '')
+  const [orderNumber, setOrderNumber] = useState(navigationOrder?.number ?? '')
   const [loading, setLoading] = useState(false)
-  const [orderResult, setOrderResult] = useState<OrderData | null>(null)
+  const [orderResult, setOrderResult] = useState<OrderData | null>(navigationOrder ?? null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
   const executeLookup = async (p: string, n: string) => {
-    if (!p.trim() && !n.trim()) {
-      setErrorMsg('يرجى إدخال رقم الهاتف أو رقم الطلب للاستعلام.')
+    if (!p.trim() || !n.trim()) {
+      setErrorMsg('يرجى إدخال رقم الطلب ورقم الهاتف المسجل معاً.')
       return
     }
 
@@ -35,12 +34,6 @@ export function TrackOrderPage() {
     }
   }
 
-  useEffect(() => {
-    if (initialPhone || initialNumber) {
-      executeLookup(initialPhone, initialNumber)
-    }
-  }, [initialPhone, initialNumber])
-
   const handleLookup = (e: React.FormEvent) => {
     e.preventDefault()
     executeLookup(phone, orderNumber)
@@ -55,7 +48,7 @@ export function TrackOrderPage() {
           </div>
           <h1 className="mt-4 text-2xl font-black text-slate-900 dark:text-white">تتبع حالة طلبك</h1>
           <p className="mt-2 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
-            أدخل <span className="font-bold text-brand-700 dark:text-cyan-300">رقم هاتفك المسجل</span> أو رقم الطلب للتحقق فوراً من مسار التجهيز والشحن.
+            أدخل رقم الطلب و<span className="font-bold text-brand-700 dark:text-cyan-300">رقم هاتفك المسجل</span> معاً للتحقق من مسار التجهيز والشحن.
           </p>
         </div>
 
@@ -69,7 +62,7 @@ export function TrackOrderPage() {
         <form onSubmit={handleLookup} className="mt-6 space-y-4">
           <div>
             <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
-              رقم الهاتف المسجل (يمكنك البحث برقم هاتفك فقط)
+              رقم الهاتف المسجل
             </label>
             <div className="relative mt-1.5">
               <input
@@ -86,7 +79,7 @@ export function TrackOrderPage() {
 
           <div>
             <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
-              أو رقم الطلب (اختياري)
+              رقم الطلب
             </label>
             <input
               type="text"
@@ -146,6 +139,7 @@ export function TrackOrderPage() {
             <div className="mt-6 flex items-center justify-center">
               <Link
                 to={`/order/${orderResult.number}`}
+                state={{ order: orderResult }}
                 className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-700 hover:text-brand-800 dark:text-cyan-300"
               >
                 <span>عرض الفاتورة وتأكيد الواتساب</span>

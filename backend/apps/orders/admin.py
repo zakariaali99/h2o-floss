@@ -20,7 +20,7 @@ from apps.core.constants import (
     ORDER_STATUS_REJECTED,
 )
 
-from .models import Client, ContactMessage, Order, OrderItem
+from .models import Client, ContactMessage, Order, OrderItem, OrderNotificationJob
 
 STATUS_COLORS = {
     ORDER_STATUS_PENDING: "#f59e0b",
@@ -118,6 +118,23 @@ class ClientAdmin(admin.ModelAdmin):
     @admin.display(description="الطلبات")
     def order_count(self, obj):
         return obj.orders.count()
+
+
+@admin.register(OrderNotificationJob)
+class OrderNotificationJobAdmin(admin.ModelAdmin):
+    list_display = ("order", "status", "attempts", "updated_at")
+    list_filter = ("status",)
+    search_fields = ("order__number",)
+    readonly_fields = ("order", "status", "attempts", "last_error", "created_at", "updated_at")
+
+    def has_add_permission(self, request) -> bool:
+        return False
+
+    def has_change_permission(self, request, obj=None) -> bool:
+        return False
+
+    def has_delete_permission(self, request, obj=None) -> bool:
+        return False
 
 
 @admin.register(ContactMessage)

@@ -102,9 +102,9 @@ export function CheckoutPage() {
         })),
       }
 
-      const res = await ordersApi.submitCheckout(payload)
+      const order = await ordersApi.submitCheckout(payload)
       clearCart()
-      navigate(`/order/${res.number}`, { replace: true })
+      navigate(`/order/${order.number}`, { replace: true, state: { order } })
     } catch (err: unknown) {
       const errorMsg =
         err && typeof err === 'object' && 'data' in err

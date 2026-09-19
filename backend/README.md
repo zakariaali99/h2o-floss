@@ -16,7 +16,7 @@ apps/catalog/     Category, Product (DEVICE/PART/ACCESSORY/KIT + hero constraint
 apps/cart/        token/session Cart + CartItem (qty ≤ 10, one line per product)
 apps/orders/      Order (frozen prices, H2O-YYYY-NNNNNN, simple-history), OrderItem,
                   Client CRM capture (real FK, not email joins), ContactMessage,
-                  checkout / orders-lookup / contact endpoints (P3)
+                  checkout / orders-lookup / contact endpoints, durable notification outbox (P3)
 tests/            pytest-django suite (guardrails against the reference app's defects)
 ```
 
@@ -54,15 +54,24 @@ an order freezes names, unit prices and totals at checkout.
 ## Commands
 
 ```bash
-python manage.py migrate
-python manage.py seed_store     # idempotent: 1 device + 6 parts + 1 kit, copies reference media
-python manage.py createsuperuser --email admin@h2ofloss.ly
-python manage.py check --fail-level WARNING
-python manage.py makemigrations --check --dry-run   # CI drift gate
-python -m pytest                                     # config.settings.test
+.venv/bin/python manage.py migrate
+.venv/bin/python manage.py seed_store     # idempotent: 1 device + 6 parts + 1 kit
+.venv/bin/python manage.py createsuperuser --email admin@h2ofloss.ly
+.venv/bin/python manage.py dispatch_order_notifications --limit 20
+.venv/bin/python manage.py check --fail-level WARNING
+.venv/bin/python manage.py makemigrations --check --dry-run
+.venv/bin/pytest
 ```
 
 ## Environment
 
+The supported runtime is Python 3.12 with Django 5.2.x. Create and use the project environment explicitly:
+
+```bash
+python3.12 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt -r requirements-dev.txt
+```
+
+Running the backend with a system Python or Django version is rejected before model loading.
 Copy `.env.example` → `.env`. Everything has a dev default, so the project runs with no `.env` at all.
 `prod.py` deliberately has **no** `SECRET_KEY` default: it fails fast when the env var is missing.

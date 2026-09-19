@@ -144,47 +144,69 @@ class Order(TimeStampedModel):
         rejected), so rejected orders never strand units. Each accepted move is
         atomic and lands in the simple-history trail.
         """
+        with transaction.atomic():
+            locked_order = type(self).objects.select_for_update().get(pk=self.pk)
+            locked_order._validate_transition(new_status)
+            if new_status == ORDER_STATUS_APPROVED:
+                locked_order._reserve_stock()
+            elif new_status == ORDER_STATUS_REJECTED and locked_order.status == ORDER_STATUS_APPROVED:
+                locked_order._release_stock()
+            locked_order.status = new_status
+            locked_order.save(update_fields=["status", "updated_at"])
+            self.status = locked_order.status
+            self.updated_at = locked_order.updated_at
+
+    def _validate_transition(self, new_status: str) -> None:
         allowed = ORDER_STATUS_TRANSITIONS.get(self.status, frozenset())
         if new_status not in allowed:
+            status_labels = dict(ORDER_STATUS_CHOICES)
             raise ValidationError(
                 _("لا يمكن نقل الطلب من «%(from)s» إلى «%(to)s».")
                 % {
                     "from": self.get_status_display(),
-                    "to": dict(ORDER_STATUS_CHOICES)[new_status],
+                    "to": status_labels.get(new_status, new_status),
                 },
                 code="invalid_transition",
             )
-        with transaction.atomic():
-            if new_status == ORDER_STATUS_APPROVED:
-                self._reserve_stock()
-            elif new_status == ORDER_STATUS_REJECTED and self.status == ORDER_STATUS_APPROVED:
-                self._release_stock()
-            self.status = new_status
-            self.save(update_fields=["status", "updated_at"])
+
+    def _requested_quantities(self) -> dict[int, int]:
+        quantities: dict[int, int] = {}
+        for product_id, quantity in self.items.values_list("product_id", "quantity"):
+            quantities[product_id] = quantities.get(product_id, 0) + quantity
+        return quantities
 
     def _reserve_stock(self) -> None:
         """Decrement every line's stock under row locks — all lines or none."""
-        items = list(self.items.select_related("product").select_for_update())
-        for item in items:
-            stock = item.product.stock_quantity
-            if stock is not None and stock < item.quantity:
+        requested_quantities = self._requested_quantities()
+        products = {
+            product.pk: product
+            for product in Product.objects.select_for_update().filter(pk__in=requested_quantities)
+        }
+        for product_id, quantity in requested_quantities.items():
+            product = products[product_id]
+            if product.stock_quantity is not None and product.stock_quantity < quantity:
                 raise ValidationError(
                     _("«%(name)s»: المخزون الحالي (%(stock)s) لا يكفي لكمية الطلب (%(qty)s).")
-                    % {"name": item.product.name, "stock": stock, "qty": item.quantity},
+                    % {"name": product.name, "stock": product.stock_quantity, "qty": quantity},
                     code="insufficient_stock",
                 )
-        for item in items:
-            if item.product.stock_quantity is not None:
-                Product.objects.filter(pk=item.product_id).update(
-                    stock_quantity=F("stock_quantity") - item.quantity
+        for product_id, quantity in requested_quantities.items():
+            if products[product_id].stock_quantity is not None:
+                Product.objects.filter(pk=product_id).update(
+                    stock_quantity=F("stock_quantity") - quantity
                 )
 
     def _release_stock(self) -> None:
         """Give back the units reserved by a since-rejected approval."""
-        for item in self.items.select_related("product").select_for_update():
-            if item.product.stock_quantity is not None:
-                Product.objects.filter(pk=item.product_id).update(
-                    stock_quantity=F("stock_quantity") + item.quantity
+        requested_quantities = self._requested_quantities()
+        products = {
+            product.pk: product
+            for product in Product.objects.select_for_update().filter(pk__in=requested_quantities)
+        }
+        for product_id, quantity in requested_quantities.items():
+            if products[product_id].stock_quantity is not None:
+                Product.objects.filter(pk=product_id).update(
+                    stock_quantity=F("stock_quantity") + quantity
                 )
 
     def save(self, *args, **kwargs):
@@ -214,9 +236,41 @@ class OrderItem(models.Model):
         verbose_name = _("عنصر طلب")
         verbose_name_plural = _("عناصر الطلبات")
         ordering = ["id"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["order", "product"], name="orders_one_line_per_product"
+            )
+        ]
 
     def __str__(self) -> str:
         return f"{self.product_name} × {self.quantity}"
+
+
+class OrderNotificationJob(TimeStampedModel):
+    """Durable request to notify managers after an order commits."""
+
+    class Status(models.TextChoices):
+        PENDING = "PENDING", _("بانتظار الإرسال")
+        PROCESSING = "PROCESSING", _("قيد الإرسال")
+        DONE = "DONE", _("تمت المعالجة")
+        FAILED = "FAILED", _("فشل الإرسال")
+
+    order = models.OneToOneField(
+        Order,
+        on_delete=models.CASCADE,
+        related_name="notification_job",
+    )
+    status = models.CharField(
+        max_length=10,
+        choices=Status.choices,
+        default=Status.PENDING,
+        db_index=True,
+    )
+    attempts = models.PositiveSmallIntegerField(default=0)
+    last_error = models.TextField(blank=True, default="")
+
+    class Meta:
+        ordering = ["created_at"]
 
 
 class ContactMessage(TimeStampedModel):

@@ -5,7 +5,6 @@ from __future__ import annotations
 from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 
-from apps.core.constants import LIBYAN_CITIES
 from apps.core.validators import validate_city, validate_libyan_phone
 
 from .models import ContactMessage, Order, OrderItem
@@ -48,6 +47,12 @@ class CheckoutSerializer(serializers.Serializer):
             return validate_city(value)
         except DjangoValidationError as exc:
             raise serializers.ValidationError(exc.messages) from exc
+
+    def validate_items(self, items: list[dict]) -> list[dict]:
+        product_ids = [line["product_id"] for line in items]
+        if len(product_ids) != len(set(product_ids)):
+            raise serializers.ValidationError("لا يمكن تكرار المنتج نفسه في الطلب.")
+        return items
 
 
 class OrderItemSerializer(serializers.ModelSerializer):

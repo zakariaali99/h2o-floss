@@ -30,8 +30,8 @@ A modern, high-converting e-commerce web application for **H2O Floss** water flo
 # Navigate to backend directory
 cd backend
 
-# Create and activate Python virtual environment
-python3 -m venv .venv
+# Create and activate the supported Python virtual environment
+python3.12 -m venv .venv
 source .venv/bin/activate
 
 # Install dependencies
@@ -45,6 +45,9 @@ python manage.py seed_store
 
 # Start Django development server on port 8017
 python manage.py runserver 8017
+
+# In another shell or a one-minute cron job, dispatch queued manager notifications
+.venv/bin/python manage.py dispatch_order_notifications --limit 20
 ```
 
 - **Backend API Base**: `http://127.0.0.1:8017/api/v1/`

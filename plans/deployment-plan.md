@@ -12,23 +12,24 @@ This plan has two halves: **(A) verify the system is correct** before shipping, 
 ## A. Pre-launch correctness checklist (do first)
 
 ### A1. Automated gates (must pass)
-- Backend: `cd backend && .venv/bin/pytest tests` → currently **99 passing**.
+- Backend: `cd backend && .venv/bin/pytest tests` → all tests must pass.
 - Frontend: `cd frontend && npm run typecheck && npm run build` → passing.
-- Django: `python manage.py check --deploy` (surfaces prod security warnings — see A4).
+- Django: `.venv/bin/python manage.py check --deploy` (surfaces prod security warnings — see A4).
 
 ### A2. Data / catalog
 - The storefront now reads the catalog live (`?featured=true` for the hero; product page by
   slug). Confirm the **real device product** exists, is `is_active`, `is_featured`, priced
   correctly — Home and the product page both mirror it now.
-- Seed only if the target DB is empty: `python manage.py seed_store` (idempotent). Do **not**
+- Seed only if the target DB is empty: `.venv/bin/python manage.py seed_store` (idempotent). Do **not**
   re-seed over a live catalog.
 
 ### A3. Manual smoke test (staging or local prod build)
 1. Home loads; hero price = dashboard price; WhatsApp/phone = dashboard `store_whatsapp`.
 2. Product page: add to cart → cart → checkout (COD and Bank transfer) → order success (no
    bank/secret leakage, order number shown).
-3. New order → manager(s) get the 3 Telegram messages (summary / invoice PDF / bank), each
-   block clearly separated. Chat ids: `2111022017`, `5410315705` (Nabeel).
+3. New order → run the notification command (or wait for cron) → manager(s) get the Telegram
+   messages (summary / invoice PDF / bank), each block clearly separated. Chat ids:
+   `2111022017`, `5410315705` (Nabeel).
 4. Admin: `/admin-login` with the real admin email/password → `/dashboard`.
    - Orders: new-order badge, mark seen / mark-all-seen, status change, note, invoice PDF
      download, print receipt, WhatsApp to customer.
@@ -71,10 +72,11 @@ Serve `dist/` from Django (WhiteNoise is the shared-hosting-friendly option):
 ### B2. Backend on the Python app host
 ```bash
 cd backend
-pip install -r requirements.txt      # incl. fpdf2, uharfbuzz, whitenoise
-python manage.py migrate
-python manage.py collectstatic --noinput
-python manage.py createsuperuser     # real admin email + strong password
+python3.12 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python manage.py migrate
+.venv/bin/python manage.py collectstatic --noinput
+.venv/bin/python manage.py createsuperuser     # real admin email + strong password
 ```
 - cPanel "Setup Python App": set the application root, entry `config/wsgi.py`
   (`application`), and the env vars from A4. Restart the app after changes.
@@ -83,8 +85,13 @@ python manage.py createsuperuser     # real admin email + strong password
   under a served static path).
 
 ### B3. Notifications on production
-- **Telegram** works on shared hosting as-is (outbound HTTPS per order). Set the *new* bot
-  token + chat ids in Settings → Telegram. This is the primary manager channel.
+- Checkout writes a durable notification job and never waits for Telegram or WhatsApp.
+- Add a cPanel cron job every minute, using absolute paths:
+  ```bash
+  /absolute/path/H2o-floss/backend/.venv/bin/python /absolute/path/H2o-floss/backend/manage.py dispatch_order_notifications --limit 20
+  ```
+- **Telegram** uses outbound HTTPS from that command. Set the *new* bot token + chat ids in
+  Settings → Telegram. This is the primary manager channel.
 - **WhatsApp self-hosted bot**: NOT possible on shared hosting (needs a persistent process).
   Leave `whatsapp_gateway_url` empty; the code already skips it cleanly. It stays dormant until
   a VPS is available (per the earlier plan).
@@ -99,9 +106,10 @@ python manage.py createsuperuser     # real admin email + strong password
 ---
 
 ## C. Known constraints / notes
-- Shared hosting = no background worker → WhatsApp self-hosting deferred; Telegram covers the need.
-- Passenger may recycle the app when idle; that's fine — every request (checkout, Telegram send)
-  runs within a normal request cycle.
+- Shared hosting has no persistent worker; the one-minute cron command processes the database outbox.
+- WhatsApp self-hosting remains deferred; Telegram covers the primary manager notification need.
+- Passenger may recycle the web app when idle without interrupting notification delivery because
+  notification jobs are stored in the database.
 - Mobile: the main flows (Home, Product, Cart, Checkout, Order Success, Dashboard) were verified
   responsive. Re-check any custom/marketing page added later at 375px width.
 
