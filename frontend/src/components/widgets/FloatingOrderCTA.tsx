@@ -119,7 +119,7 @@ export function FloatingOrderCTA() {
     e.preventDefault()
     if (!whatsappDigits) return
     lead('whatsapp_floating')
-    const message = 'السلام عليكم، أرغب بطلب جهاز H2O Floss للتنظيف المائي والدفع عند الاستلام.'
+    const message = 'السلام عليكم، أرغب بطلب جهاز H2O Floss للتنظيف المائي.'
     window.open(
       `https://wa.me/${whatsappDigits}?text=${encodeURIComponent(message)}`,
       '_blank',

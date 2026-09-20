@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { CheckCircle2, CreditCard, Loader2, MessageCircle, Send } from 'lucide-react'
+import { AlertCircle, CheckCircle2, CreditCard, Loader2, MessageCircle, Send } from 'lucide-react'
 
+import { ApiError } from '../../api/client'
 import { ordersApi } from '../../api/orders'
 import type { StoreSettingsData } from '../../api/types'
 
@@ -14,6 +15,8 @@ export function SettingsSection() {
   const queryClient = useQueryClient()
   const [form, setForm] = useState<Partial<StoreSettingsData>>({})
   const [savedSection, setSavedSection] = useState<SectionKey | null>(null)
+  const [errorSection, setErrorSection] = useState<SectionKey | null>(null)
+  const [errorMsg, setErrorMsg] = useState<string>('')
 
   const { data } = useQuery({
     queryKey: ['admin-settings'],
@@ -32,8 +35,29 @@ export function SettingsSection() {
       queryClient.invalidateQueries({ queryKey: ['admin-settings'] })
       // Merge server result but keep the other sections' in-progress edits.
       setForm((prev) => ({ ...prev, ...result }))
+      setErrorSection(null)
+      setErrorMsg('')
       setSavedSection(variables.section)
       setTimeout(() => setSavedSection((s) => (s === variables.section ? null : s)), 3000)
+    },
+    onError: (err, variables) => {
+      setSavedSection(null)
+      setErrorSection(variables.section)
+      if (
+        err instanceof ApiError &&
+        (err.status === 401 ||
+          err.code === 'token_not_valid' ||
+          err.code === 'unauthorized' ||
+          err.message?.includes('401') ||
+          err.message?.includes('غير مصرح') ||
+          err.message?.includes('جلسة'))
+      ) {
+        setErrorMsg('انتهت جلسة الدخول، سجّل الدخول من جديد ثم أعد الحفظ.')
+      } else if (err instanceof ApiError) {
+        setErrorMsg(err.message || 'فشل حفظ الإعدادات')
+      } else {
+        setErrorMsg('فشل الحفظ. تحقّق من اتصالك أو سجّل الدخول من جديد.')
+      }
     },
   })
 
@@ -41,7 +65,7 @@ export function SettingsSection() {
   const savingSection = saveMutation.isPending ? (saveMutation.variables?.section ?? null) : null
 
   const SaveButton = ({ section, label }: { section: SectionKey; label: string }) => (
-    <div className="flex items-center gap-3 pt-1">
+    <div className="flex flex-wrap items-center gap-3 pt-1">
       <button
         type="submit"
         disabled={savingSection === section}
@@ -53,6 +77,11 @@ export function SettingsSection() {
       {savedSection === section && (
         <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 dark:text-emerald-400">
           <CheckCircle2 className="size-4" /> تم الحفظ
+        </span>
+      )}
+      {errorSection === section && errorMsg && (
+        <span className="inline-flex items-center gap-1 text-xs font-bold text-rose-700 dark:text-rose-400">
+          <AlertCircle className="size-4 shrink-0" /> {errorMsg}
         </span>
       )}
     </div>
@@ -72,6 +101,8 @@ export function SettingsSection() {
         className={cardClass}
         onSubmit={(e) => {
           e.preventDefault()
+          setErrorSection(null)
+          setErrorMsg('')
           const payload: Partial<StoreSettingsData> = {
             store_whatsapp: form.store_whatsapp,
             manager_phones: form.manager_phones,
@@ -124,6 +155,8 @@ export function SettingsSection() {
         className={cardClass}
         onSubmit={(e) => {
           e.preventDefault()
+          setErrorSection(null)
+          setErrorMsg('')
           const payload: Partial<StoreSettingsData> = {
             telegram_enabled: form.telegram_enabled,
             telegram_chat_ids: form.telegram_chat_ids,
@@ -165,6 +198,8 @@ export function SettingsSection() {
         className={cardClass}
         onSubmit={(e) => {
           e.preventDefault()
+          setErrorSection(null)
+          setErrorMsg('')
           saveMutation.mutate({
             payload: {
               bank_name: form.bank_name,

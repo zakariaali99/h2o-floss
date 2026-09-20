@@ -167,7 +167,7 @@ export function Home() {
   }
 
   const whatsappUrl = `https://wa.me/${whatsappDigits || '218910000000'}?text=${encodeURIComponent(
-    'السلام عليكم، أرغب بالحصول على جهاز H2O Floss للتنظيف المائي والدفع عند الاستلام.',
+    'السلام عليكم، أرغب بالحصول على جهاز H2O Floss للتنظيف المائي.',
   )}`
 
   return (
