@@ -106,12 +106,11 @@ def build_invoice_pdf(order: Order) -> bytes:
     pdf.ln(3)
 
     # --- Totals ---
-    shipping_txt = "—" if str(order.shipping) in ("0.00", "0") else f"{order.shipping} د.ل"
-    for label, value, bold in [
-        ("المجموع الفرعي", f"{order.subtotal} د.ل", False),
-        ("الشحن", shipping_txt, False),
-        ("الإجمالي", f"{order.total} د.ل", True),
-    ]:
+    rows = [("المجموع الفرعي", f"{order.subtotal} د.ل", False)]
+    if order.shipping and order.shipping > 0:
+        rows.append(("الشحن", f"{order.shipping} د.ل", False))
+    rows.append(("الإجمالي", f"{order.total} د.ل", True))
+    for label, value, bold in rows:
         pdf.set_font("Tajawal", "B" if bold else "", 12 if bold else 10)
         pdf.set_text_color(*(BRAND if bold else DARK))
         pdf.cell(0, 8, f"{label}: {value}", align="R",

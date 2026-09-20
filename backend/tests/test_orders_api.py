@@ -509,6 +509,14 @@ def test_build_invoice_pdf_returns_pdf_bytes(seeded, api_client, cart_with_items
     assert pdf.startswith(b"%PDF")
     assert len(pdf) > 2000
 
+    # With non-zero shipping
+    from decimal import Decimal
+    order.shipping = Decimal("15.00")
+    pdf_with_shipping = build_invoice_pdf(order)
+    assert isinstance(pdf_with_shipping, bytes)
+    assert pdf_with_shipping.startswith(b"%PDF")
+    assert len(pdf_with_shipping) > 2000
+
 
 @pytest.mark.django_db
 def test_new_orders_are_unseen_and_can_be_marked_seen(seeded, api_client, admin_api_client, cart_with_items):
