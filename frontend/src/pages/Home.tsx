@@ -25,6 +25,7 @@ import { HydroBubbleCanvas } from '../components/graphics/HydroBubbleCanvas'
 import { NozzleExplorer } from '../components/widgets/NozzleExplorer'
 import { catalogApi } from '../api/catalog'
 import { ordersApi } from '../api/orders'
+import { addToCart, lead } from '../lib/pixel'
 import { useCartStore } from '../features/cart/store'
 import type { ProductCard } from '../api/types'
 
@@ -142,6 +143,12 @@ export function Home() {
   const heroOldPrice = heroProduct.old_price ? Math.round(parseFloat(heroProduct.old_price)) : null
 
   const handleBuyNow = () => {
+    addToCart({
+      id: heroProduct.id,
+      name: heroProduct.name,
+      price: parseFloat(heroProduct.price) || 0,
+      quantity: 1,
+    })
     addItem(heroProduct, 1)
     navigate('/cart')
   }
@@ -569,6 +576,7 @@ export function Home() {
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => lead('whatsapp_hero')}
               className="flex items-center gap-2 rounded-full border border-cyan-300/40 bg-white/10 px-6 py-4 text-sm font-bold text-white shadow-sm backdrop-blur-md transition-all hover:bg-white/20"
             >
               <MessageCircle className="size-4 text-emerald-400" />

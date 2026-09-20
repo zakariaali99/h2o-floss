@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { ArrowLeft, Droplets, Filter, ShoppingBag, Wrench } from 'lucide-react'
 
 import { catalogApi } from '../api/catalog'
+import { addToCart } from '../lib/pixel'
 import { useCartStore } from '../features/cart/store'
 import { GridSkeleton } from '../components/ui/ProductSkeleton'
 import type { ProductCard } from '../api/types'
@@ -169,6 +170,12 @@ export function PartsPage() {
                   <button
                     type="button"
                     onClick={() => {
+                      addToCart({
+                        id: part.id,
+                        name: part.name,
+                        price: parseFloat(part.price) || 0,
+                        quantity: 1,
+                      })
                       addItem(part, 1)
                       navigate('/cart')
                     }}

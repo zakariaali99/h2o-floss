@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Outlet, useNavigate } from 'react-router-dom'
+import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 
 import { setOnAuthLost } from '../api/client'
 import { useAuthStore } from '../features/auth/authStore'
@@ -7,9 +7,16 @@ import { SiteFooter } from '../components/layout/SiteFooter'
 import { SiteHeader } from '../components/layout/SiteHeader'
 import { ScrollToTop } from '../components/system/ScrollToTop'
 import { FloatingOrderCTA } from '../components/widgets/FloatingOrderCTA'
+import { pageView } from '../lib/pixel'
 
 export function RootLayout() {
   const navigate = useNavigate()
+  const location = useLocation()
+
+  // Fire Meta Pixel PageView on every route navigation
+  useEffect(() => {
+    pageView()
+  }, [location.pathname])
 
   // When a token silently expires and refresh fails, drop the session and
   // send the admin back to the login screen.

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { ArrowLeft, ArrowRight, CheckCircle2, Minus, Plus, ShieldCheck, ShoppingBag, Trash2, Truck, Wrench } from 'lucide-react'
 import { useCartStore } from '../features/cart/store'
+import { addToCart } from '../lib/pixel'
 
 export function CartPage() {
   const { items, removeItem, updateQuantity, clearCart, subtotal } = useCartStore()
@@ -113,7 +114,15 @@ export function CartPage() {
                     </span>
                     <button
                       type="button"
-                      onClick={() => updateQuantity(product.id, quantity + 1)}
+                      onClick={() => {
+                        updateQuantity(product.id, quantity + 1)
+                        addToCart({
+                          id: product.id,
+                          name: product.name,
+                          price: unitPrice,
+                          quantity: 1,
+                        })
+                      }}
                       aria-label="زيادة الكمية"
                       className="flex size-7 items-center justify-center rounded-full text-slate-600 hover:bg-white dark:text-slate-300 dark:hover:bg-slate-700"
                     >

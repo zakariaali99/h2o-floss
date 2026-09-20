@@ -1,11 +1,13 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { AlertCircle, ArrowLeft, Banknote, CheckCircle2, Loader2 } from 'lucide-react'
 
+import { ApiError } from '../api/client'
 import { ordersApi } from '../api/orders'
+import { initiateCheckout } from '../lib/pixel'
 import { useCartStore } from '../features/cart/store'
 import type { CheckoutPayload } from '../api/types'
 
@@ -32,7 +34,13 @@ const checkoutSchema = z.object({
   full_name: z.string().min(2, 'يرجى كتابة الاسم الكامل'),
   phone: z
     .string()
-    .regex(/^09\d{8}$/, 'يرجى إدخال رقم هاتف ليبي صحيح مكون من 10 أرقام (مثال: 0912345678)'),
+    .transform((v) => {
+      const digits = v.replace(/\D/g, '') // strip spaces/dashes/+
+      if (digits.startsWith('218') && digits.length === 12) return '0' + digits.slice(3) // +2189XXXXXXXX → 09XXXXXXXX
+      if (digits.length === 9 && digits.startsWith('9')) return '0' + digits // 9XXXXXXXX → 09XXXXXXXX
+      return digits
+    })
+    .refine((v) => /^09\d{8}$/.test(v), 'يرجى إدخال رقم هاتف ليبي صحيح (مثال: 0912345678)'),
   city: z.string().min(1, 'يرجى اختيار المدينة'),
   address: z.string().min(3, 'يرجى كتابة مكان أو عنوان التوصيل بالتفصيل'),
   payment_method: z.enum(['CASH_ON_DELIVERY', 'BANK_TRANSFER']),
@@ -48,6 +56,15 @@ export function CheckoutPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const cartSubtotal = subtotal()
+
+  // Track InitiateCheckout once when page mounts with a non-empty cart
+  const hasFiredInitCheckout = useRef(false)
+  useEffect(() => {
+    if (items.length > 0 && !hasFiredInitCheckout.current) {
+      hasFiredInitCheckout.current = true
+      initiateCheckout(cartSubtotal)
+    }
+  }, [items.length, cartSubtotal])
 
   const {
     register,
@@ -106,11 +123,13 @@ export function CheckoutPage() {
       clearCart()
       navigate(`/order/${order.number}`, { replace: true, state: { order } })
     } catch (err: unknown) {
-      const errorMsg =
-        err && typeof err === 'object' && 'data' in err
-          ? JSON.stringify((err as { data: unknown }).data)
-          : 'حدث خطأ أثناء إرسال الطلب. يرجى التأكد من البيانات والمحاولة مجدداً.'
-      setServerError(errorMsg)
+      if (err instanceof ApiError) {
+        // prefer field errors if present, else the message
+        const fieldMsgs = Object.values(err.fields ?? {}).flat()
+        setServerError(fieldMsgs.length ? fieldMsgs.join('؛ ') : err.message)
+      } else {
+        setServerError('حدث خطأ أثناء إرسال الطلب. تحقق من اتصالك وحاول مجدداً.')
+      }
     } finally {
       setIsSubmitting(false)
     }

@@ -7,6 +7,7 @@ import {
   Droplets,
   HelpCircle,
   Maximize2,
+  MessageCircle,
   Minus,
   Plus,
   ShieldCheck,
@@ -16,6 +17,8 @@ import {
 } from 'lucide-react'
 
 import { catalogApi } from '../api/catalog'
+import { ordersApi } from '../api/orders'
+import { addToCart, lead, viewContent } from '../lib/pixel'
 import { useCartStore } from '../features/cart/store'
 import { ProductSkeleton } from '../components/ui/ProductSkeleton'
 
@@ -35,12 +38,53 @@ export function ProductDetailPage() {
     queryFn: () => catalogApi.getProduct(slug),
   })
 
+  // Fetch store settings for WhatsApp fast-order button
+  const { data: storeCfg } = useQuery({
+    queryKey: ['store-settings'],
+    queryFn: () => ordersApi.getStoreSettings(),
+    staleTime: 60000,
+  })
+
+  const whatsappDigits = storeCfg?.store_whatsapp ? storeCfg.store_whatsapp.replace(/\D/g, '') : ''
+
   // Fire view beacon on mount (once per product view)
   useEffect(() => {
     if (slug) {
       catalogApi.recordProductView(slug).catch(() => {})
     }
   }, [slug])
+
+  // Fire Meta Pixel ViewContent event once product has loaded
+  useEffect(() => {
+    if (product) {
+      viewContent({
+        id: product.id,
+        name: product.name,
+        price: parseFloat(product.price) || 0,
+      })
+    }
+  }, [product?.id])
+
+  const handleAddToCart = () => {
+    if (!product) return
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: parseFloat(product.price) || 0,
+      quantity,
+    })
+    addItem(product, quantity)
+    navigate('/cart')
+  }
+
+  const handleWhatsappOrder = () => {
+    if (!product || !whatsappDigits) return
+    lead('whatsapp_product')
+    const price = Math.round(parseFloat(product.price))
+    const message = `السلام عليكم، أرغب بطلب: ${product.name} — السعر ${price} د.ل. رقم المنتج: ${product.slug}`
+    const url = `https://wa.me/${whatsappDigits}?text=${encodeURIComponent(message)}`
+    window.open(url, '_blank', 'noopener,noreferrer')
+  }
 
   if (isLoading) {
     return <ProductSkeleton />
@@ -238,43 +282,53 @@ export function ProductDetailPage() {
               )}
 
               {/* Quantity Stepper & Buy Action */}
-              <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
-                {/* Stepper */}
-                <div className="flex items-center justify-between rounded-full border border-slate-300 bg-white p-1.5 shadow-xs dark:border-slate-700 dark:bg-slate-800 sm:w-36">
+              <div className="mt-8 flex flex-col gap-3">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                  {/* Stepper */}
+                  <div className="flex items-center justify-between rounded-full border border-slate-300 bg-white p-1.5 shadow-xs dark:border-slate-700 dark:bg-slate-800 sm:w-36">
+                    <button
+                      type="button"
+                      onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                      disabled={quantity <= 1}
+                      aria-label="إنقاص الكمية"
+                      className="flex size-9 items-center justify-center rounded-full text-slate-600 transition-colors hover:bg-slate-100 disabled:opacity-30 dark:text-slate-300 dark:hover:bg-slate-700 cursor-pointer"
+                    >
+                      <Minus className="size-4" />
+                    </button>
+                    <span className="font-extrabold text-slate-900 dark:text-white ltr-nums">
+                      {quantity}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setQuantity((q) => Math.min(10, q + 1))}
+                      disabled={quantity >= 10}
+                      aria-label="زيادة الكمية"
+                      className="flex size-9 items-center justify-center rounded-full text-slate-600 transition-colors hover:bg-slate-100 disabled:opacity-30 dark:text-slate-300 dark:hover:bg-slate-700 cursor-pointer"
+                    >
+                      <Plus className="size-4" />
+                    </button>
+                  </div>
+
+                  {/* Add to Cart Button */}
                   <button
                     type="button"
-                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    disabled={quantity <= 1}
-                    aria-label="إنقاص الكمية"
-                    className="flex size-9 items-center justify-center rounded-full text-slate-600 transition-colors hover:bg-slate-100 disabled:opacity-30 dark:text-slate-300 dark:hover:bg-slate-700 cursor-pointer"
+                    onClick={handleAddToCart}
+                    className="flex flex-1 items-center justify-center gap-2 rounded-full bg-brand-800 px-8 py-4 text-base font-bold text-white shadow-lg shadow-brand-900/20 transition-all hover:bg-brand-700 active:scale-95 dark:bg-brand-600 dark:hover:bg-brand-500 cursor-pointer"
                   >
-                    <Minus className="size-4" />
-                  </button>
-                  <span className="font-extrabold text-slate-900 dark:text-white ltr-nums">
-                    {quantity}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setQuantity((q) => Math.min(10, q + 1))}
-                    disabled={quantity >= 10}
-                    aria-label="زيادة الكمية"
-                    className="flex size-9 items-center justify-center rounded-full text-slate-600 transition-colors hover:bg-slate-100 disabled:opacity-30 dark:text-slate-300 dark:hover:bg-slate-700 cursor-pointer"
-                  >
-                    <Plus className="size-4" />
+                    <ShoppingBag className="size-5" />
+                    <span>إضافة للسلة والطلب</span>
                   </button>
                 </div>
 
-                {/* Add to Cart Button */}
+                {/* WhatsApp Fast-Order Button */}
                 <button
                   type="button"
-                  onClick={() => {
-                    addItem(product, quantity)
-                    navigate('/cart')
-                  }}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-full bg-brand-800 px-8 py-4 text-base font-bold text-white shadow-lg shadow-brand-900/20 transition-all hover:bg-brand-700 active:scale-95 dark:bg-brand-600 dark:hover:bg-brand-500 cursor-pointer"
+                  onClick={handleWhatsappOrder}
+                  disabled={!whatsappDigits}
+                  className="flex w-full items-center justify-center gap-2 rounded-full bg-emerald-600 px-6 py-3.5 text-sm sm:text-base font-bold text-white shadow-md shadow-emerald-900/10 transition-all hover:bg-emerald-500 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-emerald-600 dark:hover:bg-emerald-500 cursor-pointer"
                 >
-                  <ShoppingBag className="size-5" />
-                  <span>إضافة للسلة والطلب</span>
+                  <MessageCircle className="size-5 text-emerald-100" />
+                  <span>اطلب عبر واتساب</span>
                 </button>
               </div>
 
@@ -391,10 +445,7 @@ export function ProductDetailPage() {
 
           <button
             type="button"
-            onClick={() => {
-              addItem(product, quantity)
-              navigate('/cart')
-            }}
+            onClick={handleAddToCart}
             className="flex items-center gap-2 rounded-full bg-brand-800 px-6 py-3 text-sm font-bold text-white shadow-md active:scale-95 cursor-pointer"
           >
             <ShoppingBag className="size-4" />

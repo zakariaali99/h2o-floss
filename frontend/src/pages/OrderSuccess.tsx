@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import {
@@ -13,6 +13,7 @@ import {
 
 import { ordersApi } from '../api/orders'
 import type { OrderData } from '../api/types'
+import { purchase } from '../lib/pixel'
 
 export function OrderSuccessPage() {
   const { number = '' } = useParams<{ number: string }>()
@@ -29,6 +30,16 @@ export function OrderSuccessPage() {
     retry: false,
     initialData: navigationOrder,
   })
+
+  // Fire Meta Pixel Purchase event once when confirmed order is available
+  const trackedPurchaseRef = useRef<string | null>(null)
+  useEffect(() => {
+    if (order && trackedPurchaseRef.current !== order.number) {
+      trackedPurchaseRef.current = order.number
+      const totalVal = parseFloat(order.total) || 0
+      purchase(totalVal, order.number)
+    }
+  }, [order])
 
   // 2. Fetch live store settings (only the public store WhatsApp number is used here)
   const { data: settings } = useQuery({
