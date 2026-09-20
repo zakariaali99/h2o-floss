@@ -171,7 +171,7 @@ export function CustomersSection() {
                     <div>
                       <span className="font-bold text-brand-900 dark:text-cyan-300 ltr-nums" dir="ltr">{o.number}</span>
                       <span className="block text-[11px] text-slate-400">
-                        {o.payment_method === 'BANK_TRANSFER' ? 'تحويل مصرفي' : 'كاش عند الاستلام'}
+                        {o.payment_method === 'BANK_TRANSFER' ? 'تحويل مصرفي' : 'الدفع عند الاستلام'}
                       </span>
                     </div>
                     <div className="text-end">

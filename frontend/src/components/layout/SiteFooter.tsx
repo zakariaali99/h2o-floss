@@ -52,7 +52,7 @@ export function SiteFooter() {
             </div>
             <div>
               <h4 className="text-sm font-bold text-slate-900 dark:text-white">دفع مرن وميسر</h4>
-              <p className="text-xs text-slate-500 dark:text-slate-400">كاش عند الاستلام أو تحويل مصرفي عبر واتساب</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">الدفع عند الاستلام أو تحويل مصرفي عبر واتساب</p>
             </div>
           </div>
 

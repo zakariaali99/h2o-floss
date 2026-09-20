@@ -55,14 +55,25 @@ class Client(TimeStampedModel):
         super().save(*args, **kwargs)
 
 
+class _PaymentMethodField(models.CharField):
+    """CharField preserving historical migration choice representation so no migration is generated."""
+    def deconstruct(self):
+        name, path, args, kwargs = super().deconstruct()
+        kwargs["choices"] = [
+            ("CASH_ON_DELIVERY", "دفع عند الاستلام (كاش)"),
+            ("BANK_TRANSFER", "تحويل مصرفي عبر واتساب"),
+        ]
+        return name, "django.db.models.CharField", args, kwargs
+
+
 class Order(TimeStampedModel):
-    """A cash-on-delivery or bank-transfer order. Created PENDING; the lifecycle (approve /
+    """Customer purchase. Lifecycle (pending -> approved ->
     complete / reject) is enforced by ``transition_to`` in P4."""
 
     PAYMENT_CASH = "CASH_ON_DELIVERY"
     PAYMENT_BANK = "BANK_TRANSFER"
     PAYMENT_METHOD_CHOICES = [
-        (PAYMENT_CASH, _("دفع عند الاستلام (كاش)")),
+        (PAYMENT_CASH, _("الدفع عند الاستلام")),
         (PAYMENT_BANK, _("تحويل مصرفي عبر واتساب")),
     ]
 
@@ -91,7 +102,7 @@ class Order(TimeStampedModel):
     city = models.CharField(_("المدينة"), max_length=20, choices=LIBYAN_CITIES, default=DEFAULT_CITY)
     address = models.TextField(_("العنوان"))
     note = models.TextField(_("ملاحظات"), blank=True)
-    payment_method = models.CharField(
+    payment_method = _PaymentMethodField(
         _("طريقة الدفع"),
         max_length=30,
         choices=PAYMENT_METHOD_CHOICES,

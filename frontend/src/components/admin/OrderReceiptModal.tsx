@@ -116,7 +116,7 @@ export function OrderReceiptModal({ order, onClose }: OrderReceiptModalProps) {
           <div className="flex items-center justify-between rounded-2xl bg-emerald-50 p-4 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900">
             <div>
               <span className="text-xs font-bold text-emerald-900 dark:text-emerald-300">
-                طريقة الدفع: نقداً عند الاستلام (كاش)
+                طريقة الدفع: الدفع عند الاستلام
               </span>
               <p className="text-[11px] text-emerald-700 dark:text-emerald-400">
                 يرجى تحصيل المبلغ المطلوب بالكامل عند تسليم الطرد للعميل.

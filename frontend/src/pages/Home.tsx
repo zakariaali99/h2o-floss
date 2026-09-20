@@ -85,7 +85,7 @@ const features = [
 const faqs = [
   {
     q: 'كيف تتم عملية الدفع والتوصيل؟',
-    a: 'التوصيل سريع لكافة مدن ومناطق ليبيا خلال 24-48 ساعة. نوفر خيارات دفع مرنة تشمل الدفع نقداً (كاش) عند الاستلام أو تحويل مصرفي عبر واتساب بعد معاينة وفحص الجهاز مع مندوب التوصيل.',
+    a: 'التوصيل سريع لكافة مدن ومناطق ليبيا خلال 24-48 ساعة. نوفر خيارات دفع مرنة تشمل الدفع عند الاستلام أو تحويل مصرفي عبر واتساب بعد معاينة وفحص الجهاز مع مندوب التوصيل.',
   },
   {
     q: 'هل جهاز H2O Floss مناسب لأصحاب تقويم الأسنان والزراعة؟',
@@ -342,7 +342,7 @@ export function Home() {
               },
               {
                 icon: Banknote,
-                title: 'دفع مرن · كاش أو تحويل مصرفي عبر واتساب',
+                title: 'دفع مرن · الدفع عند الاستلام أو تحويل مصرفي عبر واتساب',
                 desc: 'فحص ومعاينة الجهاز قبل السداد',
               },
               {
@@ -478,7 +478,7 @@ export function Home() {
               </div>
               <h3 className="mt-4 text-base font-bold text-slate-900 dark:text-white">التوصيل السريع</h3>
               <p className="mt-2 text-xs sm:text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-                التوصيل سريع لكافة مدن ومناطق ليبيا خلال 24-48 ساعة. خيارات دفع مرنة تشمل الدفع نقداً (كاش) عند الاستلام بعد
+                التوصيل سريع لكافة مدن ومناطق ليبيا خلال 24-48 ساعة. خيارات دفع مرنة تشمل الدفع عند الاستلام بعد
                 فحص ومعاينة الجهاز مع مندوب التوصيل أو تحويل مصرفي وتأكيده عبر واتساب.
               </p>
             </div>
@@ -491,7 +491,7 @@ export function Home() {
               <ul className="mt-2 space-y-1.5 text-xs sm:text-sm leading-relaxed text-slate-600 dark:text-slate-300">
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600" />
-                  <span>الدفع نقداً (كاش) عند الاستلام بعد معاينة الجهاز.</span>
+                  <span>الدفع عند الاستلام بعد معاينة الجهاز.</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-600" />
@@ -552,7 +552,7 @@ export function Home() {
             جاهز لتجربة العناية الفموية الفائقة؟
           </h2>
           <p className="mt-3 text-sm text-cyan-100 max-w-xl mx-auto">
-            احصل على جهاز H2O Floss الأصلي المطور بسعر {heroPrice} د.ل فقط، مع الدفع نقداً عند الاستلام أو تحويل مصرفي عبر واتساب.
+            احصل على جهاز H2O Floss الأصلي المطور بسعر {heroPrice} د.ل فقط، مع الدفع عند الاستلام أو تحويل مصرفي عبر واتساب.
           </p>
 
           <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">

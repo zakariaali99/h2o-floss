@@ -126,7 +126,7 @@ ${itemsText}
 الآيبان (IBAN): ${storeSettings?.bank_iban || ''}
 -------------------------
 يرجى إرسال إيصال التحويل لتأكيد الشحن فوراً.`
-      : `🧾 *فاتورة طلب متجر H2O Floss (كاش عند الاستلام)*
+      : `🧾 *فاتورة طلب متجر H2O Floss (الدفع عند الاستلام)*
 رقم الطلب: #${order.number}
 العميل: ${order.full_name}
 الهاتف: ${order.phone}
@@ -135,7 +135,7 @@ ${itemsText}
 المنتجات:
 ${itemsText}
 *الإجمالي المطلوب للدفع عند الاستلام: ${order.total} د.ل*
-طريقة الدفع: نقداً عند الاستلام (كاش)
+طريقة الدفع: الدفع عند الاستلام
 -------------------------
 مرحباً بك! تم تسجيل طلبك وهو قيد التجهيز.`
     return `https://wa.me/${order.phone.replace(/\D/g, '')}?text=${encodeURIComponent(text)}`
@@ -293,7 +293,7 @@ ${itemsText}
                               : 'bg-brand-100 text-brand-800 dark:bg-slate-800 dark:text-cyan-300'
                           }`}
                         >
-                          <span>{isBank ? '💳 تحويل مصرفي' : '💵 كاش استلام'}</span>
+                          <span>{isBank ? '💳 تحويل مصرفي' : 'الدفع عند الاستلام'}</span>
                         </span>
                       </td>
                       <td className="px-4 py-3.5 font-extrabold text-slate-900 dark:text-white ltr-nums">{order.total} د.ل</td>
@@ -435,7 +435,7 @@ ${itemsText}
                 <div>
                   <span className="text-slate-400">طريقة الدفع:</span>
                   <span className="block font-bold text-brand-900 dark:text-cyan-300">
-                    {viewingOrderDetails.payment_method === 'BANK_TRANSFER' ? '💳 تحويل مصرفي عبر واتساب' : '💵 نقداً عند الاستلام (كاش)'}
+                    {viewingOrderDetails.payment_method === 'BANK_TRANSFER' ? '💳 تحويل مصرفي عبر واتساب' : 'الدفع عند الاستلام'}
                   </span>
                 </div>
               </div>

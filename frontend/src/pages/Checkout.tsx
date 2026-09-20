@@ -227,7 +227,7 @@ export function CheckoutPage() {
                 </label>
 
                 <div className="grid gap-3 sm:grid-cols-2">
-                  {/* Cash on Delivery Card */}
+                  {/* Pay on delivery */}
                   <button
                     type="button"
                     onClick={() => setValue('payment_method', 'CASH_ON_DELIVERY')}
@@ -238,16 +238,15 @@ export function CheckoutPage() {
                     }`}
                   >
                     <div className="flex items-center justify-between w-full">
-                      <span className="text-base font-extrabold text-slate-900 dark:text-white flex items-center gap-1.5">
-                        <span>💵</span>
-                        <span>دفع عند الاستلام (كاش)</span>
+                      <span className="text-base font-extrabold text-slate-900 dark:text-white">
+                        الدفع عند الاستلام
                       </span>
                       {selectedPaymentMethod === 'CASH_ON_DELIVERY' && (
                         <CheckCircle2 className="size-4 text-brand-600 dark:text-cyan-400 shrink-0" />
                       )}
                     </div>
                     <p className="mt-1.5 text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-                      الدفع نقداً يداً بيد للمندوب بعد استلام المنتج ومعاينته.
+                      سداد قيمة الطلب لمندوب التوصيل بعد استلام ومعاينة المنتج.
                     </p>
                   </button>
 
@@ -302,12 +301,12 @@ export function CheckoutPage() {
                     <h4 className="text-xs font-bold text-slate-900 dark:text-emerald-200">
                       {selectedPaymentMethod === 'BANK_TRANSFER'
                         ? 'طريقة الدفع المحددة: تحويل مصرفي عبر واتساب'
-                        : 'طريقة الدفع المحددة: نقداً عند الاستلام (كاش)'}
+                        : 'طريقة الدفع المحددة: الدفع عند الاستلام'}
                     </h4>
                     <p className="mt-1 text-[11px] leading-relaxed text-slate-700 dark:text-slate-300">
                       {selectedPaymentMethod === 'BANK_TRANSFER'
                         ? 'ستظهر لك تفاصيل الحساب المصرفي ورقم الآيبان (IBAN) في الصفحة التالية، بالإضافة إلى رابط واتساب مباشر لإرسال إيصال التحويل للمتابعة الفورية.'
-                        : 'تقوم بسداد المبلغ نقداً لمندوب التوصيل بعد استلام ومعاينة الشحنة بالكامل.'}
+                        : 'سداد قيمة الطلب لمندوب التوصيل بعد استلام ومعاينة الشحنة بالكامل.'}
                     </p>
                   </div>
                 </div>

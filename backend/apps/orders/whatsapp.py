@@ -1,7 +1,7 @@
 """Automated WhatsApp dispatch service for H2O Floss.
 
 Automatically dispatches WhatsApp messages upon order completion:
-1. Customer: Full invoice + Bank details/IBAN (if bank transfer) or Invoice confirmation (if cash).
+1. Customer: Full invoice + Bank details/IBAN (if bank transfer) or Invoice confirmation (if pay on delivery).
 2. Store / System: Full order alert for preparation.
 3. Manager(s): Follow-up notification for each configured manager phone number.
 """
@@ -81,7 +81,7 @@ def build_customer_whatsapp_message(order: Order, settings: StoreSettings) -> st
         f"المجموع الفرعي: {order.subtotal} د.ل\n"
         f"الشحن: {shipping_text}\n"
         f"*الإجمالي للدفع عند الاستلام: {order.total} د.ل*\n"
-        f"طريقة الدفع: نقداً عند الاستلام (كاش)\n"
+        f"طريقة الدفع: الدفع عند الاستلام\n"
         f"-------------------------\n"
         f"تم تسجيل طلبك بنجاح وسيتواصل معك مندوب الشحن لتأكيد وقت التوصيل المناسب."
     )
@@ -94,7 +94,7 @@ def build_manager_whatsapp_message(order: Order) -> str:
         for item in order.items.all()
     )
     is_bank = order.payment_method == Order.PAYMENT_BANK
-    pay_label = "💳 تحويل مصرفي عبر واتساب" if is_bank else "💵 كاش عند الاستلام"
+    pay_label = "💳 تحويل مصرفي عبر واتساب" if is_bank else "الدفع عند الاستلام"
 
     note_line = f"\nملاحظات العميل: {order.note}" if order.note else ""
 

@@ -44,7 +44,7 @@ export function CartPage() {
         <div>
           <h1 className="text-2xl font-black text-slate-900 sm:text-3xl dark:text-white">سلة المشتريات</h1>
           <p className="mt-1 text-xs text-slate-500">
-            راجع المنتجات المختارة قبل إتمام الطلب (الدفع نقداً عند الاستلام)
+            راجع المنتجات المختارة قبل إتمام الطلب (الدفع عند الاستلام)
           </p>
         </div>
 
@@ -183,7 +183,7 @@ export function CartPage() {
             <div className="mt-4 rounded-2xl bg-slate-100 p-3 text-[11px] font-semibold text-slate-700 dark:bg-slate-800/80 dark:text-slate-300">
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 className="size-4 shrink-0 text-brand-600 dark:text-cyan-400" />
-                <span>الدفع نقداً (كاش) عند الاستلام أو عبر تحويل مصرفي مع واتساب بعد فحص الشحنة.</span>
+                <span>الدفع عند الاستلام أو عبر تحويل مصرفي مع واتساب بعد فحص الشحنة.</span>
               </div>
             </div>
 

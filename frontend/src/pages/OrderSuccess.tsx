@@ -200,7 +200,7 @@ export function OrderSuccessPage() {
             <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-300">
               <span>طريقة الدفع:</span>
               <span className="text-brand-800 dark:text-cyan-300">
-                {order.payment_method === 'BANK_TRANSFER' ? 'تحويل مصرفي' : 'كاش عند الاستلام'}
+                {order.payment_method === 'BANK_TRANSFER' ? 'تحويل مصرفي' : 'الدفع عند الاستلام'}
               </span>
             </span>
           </div>

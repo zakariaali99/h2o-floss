@@ -63,7 +63,7 @@ def build_invoice_pdf(order: Order) -> bytes:
 
     content_w = PAGE_W - 2 * MARGIN
     is_bank = order.payment_method == Order.PAYMENT_BANK
-    pay_label = "تحويل مصرفي" if is_bank else "كاش عند الاستلام"
+    pay_label = "تحويل مصرفي" if is_bank else "الدفع عند الاستلام"
 
     # --- Order + customer meta ---
     city_name = order.get_city_display() if hasattr(order, "get_city_display") else str(order.city)

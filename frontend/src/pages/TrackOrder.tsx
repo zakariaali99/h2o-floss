@@ -127,7 +127,7 @@ export function TrackOrderPage() {
               <div className="flex justify-between">
                 <span className="text-slate-500">طريقة الدفع:</span>
                 <span className="font-bold text-brand-800 dark:text-cyan-300">
-                  {orderResult.payment_method === 'BANK_TRANSFER' ? 'تحويل مصرفي عبر واتساب' : 'كاش عند الاستلام'}
+                  {orderResult.payment_method === 'BANK_TRANSFER' ? 'تحويل مصرفي عبر واتساب' : 'الدفع عند الاستلام'}
                 </span>
               </div>
               <div className="flex justify-between border-t border-slate-200/60 pt-2 font-black">

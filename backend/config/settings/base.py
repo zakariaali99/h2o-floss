@@ -116,7 +116,7 @@ FRONTEND_DIST = BASE_DIR / "dist"
 if FRONTEND_DIST.exists():
     WHITENOISE_ROOT = FRONTEND_DIST
     WHITENOISE_INDEX_FILE = True
-MEDIA_URL = "media/"
+MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 # ---------------------------------------------------------------- REST framework
