@@ -153,8 +153,20 @@ export function Home() {
     navigate('/cart')
   }
 
-  const whatsappNumber = storeCfg?.store_whatsapp || '218910000000'
-  const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/\D/g, '')}?text=${encodeURIComponent(
+  const whatsappDigits = storeCfg?.store_whatsapp?.replace(/\D/g, '') ?? ''
+
+  const handleWhatsappOrder = () => {
+    if (!whatsappDigits) return
+    lead('whatsapp_home')
+    const message = `السلام عليكم، أرغب بطلب: ${heroProduct.name} — السعر ${heroPrice} د.ل.`
+    window.open(
+      `https://wa.me/${whatsappDigits}?text=${encodeURIComponent(message)}`,
+      '_blank',
+      'noopener,noreferrer',
+    )
+  }
+
+  const whatsappUrl = `https://wa.me/${whatsappDigits || '218910000000'}?text=${encodeURIComponent(
     'السلام عليكم، أرغب بالحصول على جهاز H2O Floss للتنظيف المائي والدفع عند الاستلام.',
   )}`
 
@@ -303,7 +315,7 @@ export function Home() {
               {/* CTA Action Buttons */}
               <motion.div
                 variants={fadeInUp}
-                className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center w-full sm:w-auto"
+                className="mt-8 flex flex-wrap items-center gap-3 w-full sm:w-auto"
               >
                 <Link
                   to="/product/h2o-floss"
@@ -313,13 +325,15 @@ export function Home() {
                   <span>اطلب الجهاز الآن</span>
                 </Link>
 
-                <a
-                  href="#demo-video"
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-300 bg-white/90 px-6 py-4 text-sm font-bold text-slate-700 shadow-sm backdrop-blur-md transition-all hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+                <button
+                  type="button"
+                  onClick={handleWhatsappOrder}
+                  disabled={!whatsappDigits}
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-emerald-600 px-4 py-2.5 sm:px-5 sm:py-3 text-sm font-bold text-white shadow-md shadow-emerald-900/10 transition-all hover:bg-emerald-500 active:scale-95 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
                 >
-                  <Play className="size-4 text-brand-600 dark:text-cyan-400" />
-                  <span>مشاهدة فيديو التجربة</span>
-                </a>
+                  <MessageCircle className="size-4 text-emerald-100" />
+                  <span>اطلب عبر واتساب</span>
+                </button>
               </motion.div>
             </motion.div>
           </div>
