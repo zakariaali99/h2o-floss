@@ -12,7 +12,6 @@ import {
   Gauge,
   HelpCircle,
   MessageCircle,
-  Play,
   RotateCcw,
   ShieldCheck,
   ShoppingBag,
@@ -444,32 +443,6 @@ export function Home() {
       </section>
 
 
-      {/* SECTION 5: INTERACTIVE VIDEO SHOWCASE WITH AMBIENT GLOW */}
-      <section id="demo-video" className="py-24 bg-slate-900 text-white relative">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6">
-          <div className="text-center max-w-2xl mx-auto">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-cyan-950/80 px-3.5 py-1 text-xs font-bold text-cyan-300 border border-cyan-800/50">
-              <Play className="size-3.5" />
-              <span>عرض توضيحي حي</span>
-            </span>
-            <h2 className="mt-4 text-3xl font-black sm:text-4xl text-white">
-              شاهد قوة ضخ H2O Floss أثناء الاستخدام
-            </h2>
-            <p className="mt-2 text-xs sm:text-sm text-slate-300">
-              طريقة الاستخدام السلسة والتحكم بالضغط لتنظيف شامل في دقيقة واحدة يومياً.
-            </p>
-          </div>
-
-          <div className="mt-12 relative overflow-hidden rounded-[2.5rem] border border-cyan-500/40 bg-slate-950 p-2 sm:p-3 shadow-[0_0_60px_rgba(6,182,212,0.25)]">
-            <img
-              src="/images/h2ofloss-device-main.jpg"
-              alt="جهاز H2O Floss أثناء الاستخدام"
-              loading="lazy"
-              className="w-full aspect-video rounded-[2rem] object-cover bg-black shadow-inner"
-            />
-          </div>
-        </div>
-      </section>
 
       {/* SECTION 6: INTERACTIVE 6 NOZZLES EXPLORER WIDGET */}
       <section className="py-24">
