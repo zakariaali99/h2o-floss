@@ -461,16 +461,12 @@ export function Home() {
           </div>
 
           <div className="mt-12 relative overflow-hidden rounded-[2.5rem] border border-cyan-500/40 bg-slate-950 p-2 sm:p-3 shadow-[0_0_60px_rgba(6,182,212,0.25)]">
-            <video
-              controls
-              playsInline
-              preload="auto"
-              poster="/images/h2ofloss-device-main.jpg"
+            <img
+              src="/images/h2ofloss-device-main.jpg"
+              alt="جهاز H2O Floss أثناء الاستخدام"
+              loading="lazy"
               className="w-full aspect-video rounded-[2rem] object-cover bg-black shadow-inner"
-            >
-              <source src="/video/product-demo.mp4" type="video/mp4" />
-              متصفحك لا يدعم تشغيل الفيديو مباشرة.
-            </video>
+            />
           </div>
         </div>
       </section>
